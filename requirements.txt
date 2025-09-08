@@ -1,0 +1,9 @@
+langchain
+langchain-community
+langchain-chroma
+langchain-ollama
+pydantic==2.7.4
+ollama
+chromadb==0.5.4
+python-dotenv
+pypdf
