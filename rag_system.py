@@ -124,7 +124,7 @@ def create_rag_chain(vector_store):
     document_chain = create_stuff_documents_chain(llm, prompt)
 
     # Create the retriever from the vector store
-    retriever = vector_store.as_retriever()
+    retriever = vector_store.as_retriever(search_kwargs={"k": 4})
 
     # Create the full retrieval chain
     retrieval_chain = create_retrieval_chain(retriever, document_chain)
