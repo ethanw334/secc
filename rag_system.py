@@ -17,7 +17,7 @@
 #    ollama pull llama3.2
 #    ollama pull nomic-embed-text
 #
-# 3. Create a 'PDFs' directory and place your PDF files inside it.
+# 3. Place your PDF files inside the 'PDFs' directory.
 # -----------------------------------------------------------------------------
 
 import os
