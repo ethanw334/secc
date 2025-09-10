@@ -26,8 +26,10 @@ Git for cloning the repository.
 
 Ollama: Follow the instructions at ollama.ai to install the Ollama application. After installation, download the necessary models by running these commands in your terminal:
 
+```
 ollama pull llama3.2
 ollama pull nomic-embed-text
+```
 
 A PDFs folder in the root directory of this project. Place all the PDF documents you want to use as your knowledge base inside this folder.
 
@@ -42,20 +44,29 @@ cd your-repo-name
 ```
 Create a virtual environment (recommended):
 
+```
 python -m venv venv
+```
+
 # On Windows
+```
 venv\Scripts\activate
+```
 # On macOS/Linux
+```
 source venv/bin/activate
+```
 
 Install Python dependencies:
-
+```
 pip install -r requirements.txt
+```
 
 5. Usage
 To run the RAG application, simply execute the main Python script from your terminal:
-
+```
 python rag_app.py
+```
 
 The first time you run the script, it will create a new ChromaDB vector store named chroma_db in the project directory. This process can take a few minutes depending on the number of documents.
 
