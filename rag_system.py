@@ -30,14 +30,12 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains import create_retrieval_chain
 import logging
 from dotenv import load_dotenv
+import chromadb
+from chromadb.config import Settings
 
 # Select Models
 LLM_MODEL = "llama3.2"
 EMBEDDING_MODEL = "nomic-embed-text"
-
-# Import the ChromaDB client and settings
-import chromadb
-from chromadb.config import Settings
 
 # Set up basic logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
