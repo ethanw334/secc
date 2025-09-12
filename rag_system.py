@@ -164,12 +164,17 @@ def main():
             response = rag_chain.invoke({"input": question})
             # The 'answer' key contains the generated response
             print("\nAnswer:", response['answer'])
+            
+            # 💡 Access the context and print the retrieved chunks with page number
+            print("\n--- Retrieved Chunks ---")
+            for i, doc in enumerate(response['context']):
+                source = doc.metadata.get('source', 'Unknown source')
+                page = doc.metadata.get('page', 'N/A') + 1 # Page numbers are often 0-indexed, so add 1
+                print(f"Chunk {i+1} from {source} (Page: {page}):\n{doc.page_content}\n")
+            print("------------------------")
+
         except Exception as e:
             logging.error(f"An error occurred while processing the question: {e}")
 
 if __name__ == "__main__":
     main()
-
-
-
-
