@@ -165,7 +165,7 @@ def main():
             # The 'answer' key contains the generated response
             print("\nAnswer:", response['answer'])
             
-            # 💡 Access the context and print the retrieved chunks with page number
+            # Access the context and print the retrieved chunks with page number
             print("\n--- Retrieved Chunks ---")
             for i, doc in enumerate(response['context']):
                 source = doc.metadata.get('source', 'Unknown source')
