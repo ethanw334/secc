@@ -9,12 +9,6 @@ Local LLM Integration: Uses the Ollama framework to run open-source models (like
 
 Document-Based Answering: Provides answers exclusively based on the content of your provided PDF files.
 
-PDF document pre-processing <--- TODO
-
-Persistent Vector Store: Utilizes ChromaDB to create and save a persistent knowledge base, so you don't need to re-process documents on every run. <---- TODO
-
-Modular Architecture: The codebase is organized into distinct functions for document loading, splitting, embedding, and generation, making it easy to understand and modify.
-
 GPU Acceleration: Automatically leverages a compatible GPU (if available) via the Ollama server for significantly faster performance.
 
 3. Prerequisites
@@ -39,7 +33,7 @@ Follow these steps to set up the project:
 Clone the repository:
 
 ```
-git clone https://github.com/your-username/your-repo-name.git
+git clone https: https://github.com/ethanw334/rag-system.git
 cd your-repo-name
 ```
 Create a virtual environment (recommended):
@@ -69,8 +63,6 @@ python rag_app.py
 ```
 
 The first time you run the script, it will create a new ChromaDB vector store named chroma_db in the project directory. This process can take a few minutes depending on the number of documents.
-
-On subsequent runs, the script will automatically detect and load the existing vector store for a much faster startup time.
 
 6. File Descriptions
 rag_app.py: The main application script. This file contains all the logic for document ingestion, vectorization, and the RAG query-answering loop.
