@@ -59,13 +59,13 @@ pip install -r requirements.txt
 5. Usage
 To run the RAG application, simply execute the main Python script from your terminal:
 ```
-python rag_app.py
+python rag_system_v2.py
 ```
 
 The first time you run the script, it will create a new ChromaDB vector store named chroma_db in the project directory. This process can take a few minutes depending on the number of documents.
 
 6. File Descriptions
-rag_app.py: The main application script. This file contains all the logic for document ingestion, vectorization, and the RAG query-answering loop.
+rag_system_v2.py: The main application script. This file contains all the logic for document ingestion, vectorization, and the RAG query-answering loop.
 
 requirements.txt: A list of all Python libraries required for the project.
 
