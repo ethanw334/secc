@@ -5,15 +5,12 @@ from langchain_ollama import OllamaEmbeddings, OllamaLLM
 from langchain_community.vectorstores import Chroma
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
-#from langchain.chains import create_retrieval_chain, create_history_aware_retriever
-#from langchain_core.messages import HumanMessage
 import logging
-from dotenv import load_dotenv
 import chromadb
 from chromadb.config import Settings
 
 # Document Directory
-document_dir = "PDFs/Smart_Home_Ex/SE_Artifacts"
+document_dir = "PDFs"
 
 # Select Models
 LLM_MODEL = "llama3.2"
@@ -124,7 +121,6 @@ def main():
     """
     Main function to run the multi-step RAG application.
     """
-    load_dotenv()  # Load environment variables from a .env file if it exists
 
     documents = load_documents(document_dir)
     if not documents:

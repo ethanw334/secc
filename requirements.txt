@@ -1,9 +1,6 @@
-langchain
-langchain-community
-langchain-chroma
-langchain-ollama
-pydantic==2.7.4
-ollama
-chromadb==0.5.4
-python-dotenv
+langchain-community>=0.3,<0.4
+langchain>=0.3,<0.4
+langchain-ollama>=0.2,<0.3
+langchain-core>=0.3,<0.4
+chromadb
 pypdf
