@@ -68,12 +68,3 @@ python rag_system_v2.py
 ```
 
 The first time you run the script, it will create a new ChromaDB vector store named chroma_db in the project directory. This process can take a few minutes depending on the number of documents.
-
-6. File Descriptions
-rag_system_v2.py: The main application script. This file contains all the logic for document ingestion, vectorization, and the RAG query-answering loop.
-
-requirements.txt: A list of all Python libraries required for the project.
-
-7. Contributing
-Contributions are welcome! If you find a bug or have an idea for a new feature, please open an issue or submit a pull request.
-
