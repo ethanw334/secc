@@ -7,8 +7,8 @@ from marker.output import text_from_rendered
 from ollama import chat
 
 # Select Model and PDF Directory
-LLM = 'llama3.1:8b'
-PDF_DIRECTORY = r'PDFs\SE_Artifacts'
+LLM = 'llama3.2:latest'
+PDF_DIRECTORY = r'PDFs'
 
 # ==============================================================================
 # 1. DATA STRUCTURES (Pydantic Models and Enums)
