@@ -4,3 +4,4 @@ langchain-ollama>=0.2,<0.3
 langchain-core>=0.3,<0.4
 chromadb
 pypdf
+marker-pdf
