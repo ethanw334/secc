@@ -7,7 +7,7 @@ from marker.output import text_from_rendered
 from ollama import chat
 
 # Select Model and PDF Directory
-LLM = 'llama3.2:latest'
+LLM = 'llama3.1:8b'
 PDF_DIRECTORY = r'PDFs'
 
 # ==============================================================================
@@ -174,4 +174,3 @@ Perform the cross-comparison audit based on your system instructions. Analyze th
     
     # --- 6. Output Generation ---
     print_findings_list(inconsistencies)
-    print("\nSuccessfully parsed LLM response into FindingsList object.")
