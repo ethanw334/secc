@@ -1,24 +1,32 @@
 import os
+import re
+import datetime
+import uuid
+import hashlib
+import sqlite3
+import gc 
+import sys 
 from pydantic import BaseModel, Field
 from typing import List, Literal, Optional
 from marker.converters.pdf import PdfConverter
 from marker.models import create_model_dict
 from marker.output import text_from_rendered
 from ollama import chat
-import uuid 
-import datetime 
-import sqlite3
-import hashlib
-import sys
-import gc
+from langchain_ollama import OllamaEmbeddings
+from langchain_text_splitters import MarkdownHeaderTextSplitter
+from langchain_community.vectorstores import Chroma
+from langchain_core.documents import Document as LangChainDocument
+import chromadb
 
-# Select Model and PDF Directory
+# --- GLOBAL CONFIGURATION ---
 LLM = 'llama3.1:8b'
+EMBEDDING_MODEL = 'nomic-embed-text'
 PDF_DIRECTORY = r'PDFs'
 
-# --- Database Configuration ---
+# --- Database & ChromaDB Configuration ---
 DATABASE_NAME = 'secc_artifacts.db'
 METADATA_TABLE = 'artifact_log'
+CHROMA_COLLECTION = 'secc_artifact_collection'
 
 # Output Report
 REPORT_FILENAME = "analysis_report.txt"
@@ -61,6 +69,7 @@ class ArtifactMetadata(BaseModel):
 # 2. HELPER FUNCTIONS
 # ==============================================================================
 
+# --- Database Management ---
 def initialize_database():
     """Initializes the SQLite database and creates the metadata table with new columns."""
     conn = None
@@ -68,7 +77,7 @@ def initialize_database():
         conn = sqlite3.connect(DATABASE_NAME)
         cursor = conn.cursor()
 
-        # SQL to create the table
+        # SQL to create the table, relying on ContentHash for uniqueness
         cursor.execute(f"""
             CREATE TABLE IF NOT EXISTS {METADATA_TABLE} (
                 Filename TEXT NOT NULL,
@@ -96,9 +105,9 @@ def log_metadata_to_db(metadata: ArtifactMetadata):
         conn = sqlite3.connect(DATABASE_NAME)
         cursor = conn.cursor()
         
-        # SQL to insert data
+        # Use INSERT OR IGNORE based on the ContentHash UNIQUE constraint
         cursor.execute(f"""
-            INSERT INTO {METADATA_TABLE} 
+            INSERT OR IGNORE INTO {METADATA_TABLE} 
             (Filename, VersionID, AuthorPlaceholder, UploadTimestamp, FileSizeBytes, ContentHash, MarkdownContent) 
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (
@@ -111,10 +120,12 @@ def log_metadata_to_db(metadata: ArtifactMetadata):
             metadata.MarkdownContent
         ))
         
+        if cursor.rowcount == 0:
+             print(f"Metadata for {metadata.Filename} (Hash: {metadata.ContentHash[:8]}) already exists. Log ignored.")
+        else:
+             print(f"Logged new version V-ID {metadata.VersionID} for {metadata.Filename}.")
+             
         conn.commit()
-    except sqlite3.IntegrityError:
-        # Catches duplicate ContentHash (meaning the file content hasn't changed)
-        print(f"Warning: A record with this ContentHash/VersionID already exists. Skipping insertion.")
     except sqlite3.Error as e:
         print(f"Error logging metadata: {e}")
     finally:
@@ -128,7 +139,6 @@ def check_for_cached_content(content_hash: str) -> Optional[str]:
         conn = sqlite3.connect(DATABASE_NAME)
         cursor = conn.cursor()
         
-        # Query to retrieve the Markdown content based on the hash
         cursor.execute(f"SELECT MarkdownContent FROM {METADATA_TABLE} WHERE ContentHash = ?", (content_hash,))
         result = cursor.fetchone()
         
@@ -140,12 +150,44 @@ def check_for_cached_content(content_hash: str) -> Optional[str]:
         if conn:
             conn.close()
 
+# --- Markdown Processing ---
+def tag_markdown_sections(markdown_text: str, filename: str) -> str:
+    """
+    Scans Markdown text and injects a unique ID tag into every heading for traceability.
+    Format: [FILE_SECTION_ID], e.g., [CON-S001].
+    """
+    lines = markdown_text.split('\n')
+    tagged_lines = []
+    
+    # Use the first 3 letters of the filename for a unique prefix (e.g., CON)
+    prefix = filename.split('.')[0][:3].upper() 
+    section_counter = 0
+
+    # Regex to find any Markdown header (starts with 1-6 '#' symbols)
+    header_pattern = re.compile(r'^(#+)\s*(.*)') 
+
+    for line in lines:
+        match = header_pattern.match(line)
+        if match:
+            # Found a header line
+            section_counter += 1
+            
+            # Generate a unique ID: [FILE-S(SectionNumber)]
+            tag = f"[{prefix}-S{section_counter:03d}]"
+            
+            # Reconstruct the line: ### [TAG] Original Header Text
+            tagged_line = f"{match.group(1)} {tag} {match.group(2).strip()}"
+            tagged_lines.append(tagged_line)
+        else:
+            # Not a header, keep the line as is
+            tagged_lines.append(line)
+
+    return "\n".join(tagged_lines)
 
 # --- PDF Ingestion and Formatting (FR 3.1) ---
 def get_pdfs_in_directory(directory_path, converter: PdfConverter):
     """
-    Finds PDFs, calculates a content hash, uses the database cache to skip conversion 
-    if content is unchanged, and converts/logs new content.
+    Finds PDFs, caches the content, and converts/logs new content with traceability tags.
     """
     pdf_contents = {}
     
@@ -165,7 +207,6 @@ def get_pdfs_in_directory(directory_path, converter: PdfConverter):
         
         try:
             # 1. Read file bytes and Calculate Content Hash (SHA256)
-            # This is fast and tells us if the file content has changed
             with open(pdf_path, 'rb') as f:
                 pdf_bytes = f.read()
             
@@ -175,21 +216,22 @@ def get_pdfs_in_directory(directory_path, converter: PdfConverter):
             cached_content = check_for_cached_content(content_hash)
             
             if cached_content:
-                # Content found and hasn't changed, skip expensive conversion
                 print(f'Cached (Hash: {content_hash[:8]}). Using previous content.')
                 text = cached_content
                 
             else:
-                # Content is new or updated. Perform conversion and logging.
                 print(f'New or updated content. Converting (Slow step) and logging to database...')
                 
                 # Marker conversion logic (The expensive step)
                 rendered = converter(pdf_path)
-                text, _, _ = text_from_rendered(rendered)
+                text_unprocessed, _, _ = text_from_rendered(rendered) 
                 
-                # 3. Collect Metadata and Log to DB
+                # --- APPLY TRACEABILITY TAGS ---
+                text = tag_markdown_sections(text_unprocessed, filename) 
+                
+                # 3. Collect Metadata and Log New Content to DB
                 file_stats = os.stat(pdf_path)
-                version_id = str(uuid.uuid4())[:8] # Generate a new version ID for the new content state
+                version_id = str(uuid.uuid4())[:8] 
                 
                 metadata = ArtifactMetadata(
                     Filename=filename,
@@ -197,12 +239,11 @@ def get_pdfs_in_directory(directory_path, converter: PdfConverter):
                     AuthorPlaceholder="SECC_Uploader", 
                     UploadTimestamp=datetime.datetime.now().isoformat(),
                     FileSizeBytes=file_stats.st_size,
-                    ContentHash=content_hash,
-                    MarkdownContent=text 
+                    ContentHash=content_hash, 
+                    MarkdownContent=text     
                 )
                 log_metadata_to_db(metadata)
 
-            # Store the final text content for the current LLM analysis run
             pdf_contents[filename] = text
         
         except Exception as e:
@@ -210,7 +251,94 @@ def get_pdfs_in_directory(directory_path, converter: PdfConverter):
             
     return pdf_contents
 
+# --- Vectorization and RAG Prep (FR 3.4) ---
+def create_vector_store(artifact_contents: dict, collection_name: str, embedding_model_name: str):
+    """
+    Chunks Markdown content, embeds the chunks using Ollama, and stores 
+    them in a local ChromaDB collection.
+    """
+    print("\n--- Starting Vectorization and ChromaDB Storage ---")
+    
+    # 1. Initialize Ollama Embeddings (This loads the model to VRAM)
+    try:
+        embeddings = OllamaEmbeddings(model=embedding_model_name)
+    except Exception as e:
+        print(f"Error initializing Ollama Embeddings: {e}")
+        print(f"Please ensure the embedding model '{embedding_model_name}' is pulled ('ollama pull {embedding_model_name}')")
+        return None
 
+    # 2. Initialize ChromaDB Client
+    persist_directory = "chroma_db"
+    chroma_client = chromadb.PersistentClient(path=persist_directory)
+    
+    collection = chroma_client.get_or_create_collection(name=collection_name)
+    
+    # Delete previous data
+    try:
+        print(f"Clearing existing documents from collection: {collection_name}")
+        collection.delete(where={})
+    except Exception:
+        pass # Ignore if collection is empty or new
+        
+
+    # 3. Process Each Artifact
+    all_chunks: List[LangChainDocument] = []
+    
+    # Define headers to split by. This relies on the tags we injected earlier.
+    headers_to_split_on = [
+        ("#", "SectionTitle"),
+        ("##", "SectionTitle"),
+        ("###", "SectionTitle"),
+        ("####", "SectionTitle"),
+    ]
+
+    for filename, markdown_content in artifact_contents.items():
+        markdown_splitter = MarkdownHeaderTextSplitter(
+            headers_to_split_on=headers_to_split_on,
+            strip_headers=False
+        )
+        
+        chunks = markdown_splitter.split_text(markdown_content)
+        
+        doc_type = filename.split('.')[0].upper()
+        
+        for i, chunk in enumerate(chunks):
+            # Extract the actual traceability tag (e.g., [CON-S001])
+            tag_match = re.search(r'\[[A-Z]{3}-S\d{3}\]', chunk.page_content)
+            source_tag = tag_match.group(0).strip('[]') if tag_match else f"{doc_type}-P{i+1:03d}"
+            
+            # Build final, rich metadata dictionary
+            chunk.metadata.update({
+                "source_file": filename,
+                "doc_type": doc_type,
+                "source_tag": source_tag, # The unique section ID for retrieval
+                "chunk_index": i
+            })
+            
+            all_chunks.append(chunk)
+
+    print(f"Total documents processed: {len(artifact_contents)}. Total chunks created: {len(all_chunks)}")
+    
+    # 4. Embed and Store
+    if all_chunks:
+        print("Embedding and storing documents in ChromaDB... (Using OllamaEmbeddings)")
+        
+        try:
+            # Use LangChain's helper to create the store, handling embedding
+            Chroma.from_documents(
+                documents=all_chunks,
+                embedding=embeddings,
+                collection_name=collection_name,
+                persist_directory=persist_directory
+            )
+            print(f"Successfully stored {len(all_chunks)} embeddings in {collection_name}.")
+            
+        except Exception as e:
+            print(f"Failed during embedding or storage: {e}")
+    
+    print("Vector store successfully created and ready for RAG.")
+
+# --- Output Management ---
 def print_findings_list(findings_list: FindingsList, output_file: str = None):
     """
     Generates the list of findings in a clean, human-readable format 
@@ -218,17 +346,15 @@ def print_findings_list(findings_list: FindingsList, output_file: str = None):
     """
     total_findings = len(findings_list.inconsistencies)
     
-    # 1. Determine the output destination
     if output_file:
         print(f"--- Writing analysis report to: {output_file} ---")
         f = open(output_file, 'w', encoding='utf-8')
     else:
-        f = sys.stdout # Default to terminal output
+        f = sys.stdout 
         
     def write_line(text=""):
         f.write(text + '\n')
 
-    # 2. Replicate existing logic using write_line
     write_line("=" * 70)
     write_line(f"| ANALYSIS REPORT: Found {total_findings} Inconsistencies |")
     write_line("=" * 70)
@@ -236,13 +362,11 @@ def print_findings_list(findings_list: FindingsList, output_file: str = None):
     for i, finding in enumerate(findings_list.inconsistencies, 1):
         write_line(f"\n--- FINDING {i} of {total_findings} (ID: {finding.FindingID}) " + "-"*20)
 
-        # Basic metadata
         write_line(f"Severity: \t\t{finding.SeverityLevel}")
         write_line(f"Category: \t\t{finding.Category}")
         write_line(f"Confidence: \t\t{finding.ConfidenceScore:.1f} / 1.0")
         write_line(f"Sources: \t\t{' & '.join(finding.SourceArtifacts)}")
 
-        # Detailed text block
         write_line("\n[Detailed Description]")
         text_lines = finding.FindingText.split('\n')
         for line in text_lines:
@@ -250,7 +374,6 @@ def print_findings_list(findings_list: FindingsList, output_file: str = None):
 
         write_line("-" * 70)
 
-    # 3. Close the file if it was opened
     if output_file:
         f.close()
 
@@ -259,47 +382,41 @@ def print_findings_list(findings_list: FindingsList, output_file: str = None):
 # ==============================================================================
 
 if __name__ == "__main__":
-    # 3.0 Initialize the local database (FR: logs metadata into a local database)
+    
+    # 3.0 Initialize the local database
     initialize_database()
-
-    # Initialize PDF Converter (FR 3.1)
+    
+    # Initialize PDF Converter (FR 3.1) - Loads models to VRAM
     converter = PdfConverter(
         artifact_dict=create_model_dict(),
     )
     
-    # 3.1 Ingest and format documents (FR 3.1)
-    # Pass the initialized converter into the function
-    artifact_contents = get_pdfs_in_directory(PDF_DIRECTORY, converter)
+    # 3.1 Ingest and format documents
+    artifact_contents = get_pdfs_in_directory(PDF_DIRECTORY, converter) 
 
-    # --- VRAM Management: Manual Cleanup ---
-    print("Attempting to release Marker models from VRAM...")
-
-    # 1. Explicitly delete the converter object.
+    # --- VRAM Management: Manual Cleanup (Marker) ---
+    print("\nAttempting to release Marker models from VRAM...")
     del converter 
-
-    # 2. Force the Python garbage collector to run.
     gc.collect() 
-
-    # 3. Explicitly empty the CUDA cache (most effective VRAM cleanup)
     try:
         import torch
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
-    except Exception as e:
-        # If torch is unavailable or fails, rely on system/gc
-        print(f"Warning: Could not explicitly empty CUDA cache. Error: {e}")
-
+    except:
+        pass
     print("Marker model cleanup complete.")
-    # --- Marker VRAM is now cleared, making room for the LLM ---
-
+    
     if not artifact_contents:
         print("Analysis terminated due to missing PDF content.")
         exit()
 
-    # Format the contents into a single string for the LLM
+    # --- 3.2 Create Vector Store (FR 3.4) ---
+    # This step loads the *embedding* model, uses it, and then explicitly unloads it. For later RAG implementation
+    #create_vector_store(artifact_contents, CHROMA_COLLECTION, EMBEDDING_MODEL)
+    
+    # Format the contents into a single string for the final LLM cross-comparison
     document_context = ""
     for filename, content in artifact_contents.items():
-        # Tagging content with the filename is crucial for SourceArtifacts traceability
         document_context += f"--- START OF ARTIFACT: {filename} ---\n{content}\n--- END OF ARTIFACT: {filename} ---\n\n"
 
     # --- 4. LLM System and User Prompt Setup (FR 3.2, 3.3) ---
@@ -328,7 +445,7 @@ Perform the cross-comparison audit based on your system instructions. Analyze th
 ---
 '''
     # --- 5. LLM Call and Pydantic Validation ---
-    print("--- Sending request to LLM (ollama chat) ---")
+    print("\n--- Sending request to LLM (ollama chat) ---")
     response = chat(
         model=LLM,
         messages=[
@@ -336,8 +453,9 @@ Perform the cross-comparison audit based on your system instructions. Analyze th
             {'role': 'user', 'content': user_message}
         ],
         format=json_schema, 
-        options={'temperature': 0, # more deterministic output
-                 'keep_alive': 0} # offloads model weights immediately after chat
+        options={'temperature': 0, 
+                 'keep_alive': 0 # Instructs Ollama to offload the model immediately after this request
+                 } 
     )
 
     # Validate and parse the JSON response into the Pydantic model

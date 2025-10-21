@@ -65,4 +65,4 @@ The report will be output as analysis_report.txt
 
 secc.py: The SECC application script using all PDF data.
 
-rag_app.py: The RAG application script. This file contains all the logic for document ingestion, vectorization, and the RAG query-answering loop.
+rag_system.py: The RAG application script. This file contains all the logic for document ingestion, vectorization, and the RAG query-answering loop.
