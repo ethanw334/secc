@@ -1,0 +1,63 @@
+======================================================================
+| ANALYSIS REPORT: Found 6 Inconsistencies |
+======================================================================
+
+--- FINDING 1 of 6 (ID: F001) --------------------
+Severity: 		High
+Category: 		Semantic and Context
+Confidence: 		0.8 / 1.0
+Sources: 		conops.pdf & sdd.pdf
+
+[Detailed Description]
+   > The ConOps document mentions real-time notifications and alerts, but the SDD does not address this feature.
+----------------------------------------------------------------------
+
+--- FINDING 2 of 6 (ID: F002) --------------------
+Severity: 		High
+Category: 		Semantic and Context
+Confidence: 		0.9 / 1.0
+Sources: 		sdd.pdf & srs.pdf
+
+[Detailed Description]
+   > The SDD describes the Audio Alert Module, but the SRS only mentions an audible alarm without specifying a module.
+----------------------------------------------------------------------
+
+--- FINDING 3 of 6 (ID: F003) --------------------
+Severity: 		Medium
+Category: 		Traceability
+Confidence: 		0.7 / 1.0
+Sources: 		srs.pdf & v&v.pdf
+
+[Detailed Description]
+   > The SRS specifies that the SHH shall encrypt all data transmissions using AES-256, but the V&V document does not include a test for this requirement.
+----------------------------------------------------------------------
+
+--- FINDING 4 of 6 (ID: F004) --------------------
+Severity: 		Low
+Category: 		Semantic and Context
+Confidence: 		0.6 / 1.0
+Sources: 		conops.pdf & sdd.pdf
+
+[Detailed Description]
+   > The ConOps document states that the system will rely on Wi-Fi for all communication, but the SDD does not explicitly mention this.
+----------------------------------------------------------------------
+
+--- FINDING 5 of 6 (ID: F005) --------------------
+Severity: 		High
+Category: 		Traceability
+Confidence: 		0.8 / 1.0
+Sources: 		srs.pdf & v&v.pdf
+
+[Detailed Description]
+   > The SRS specifies that the SHH shall trigger an alarm within 2 seconds of a security event, but the V&V document does not include a test for this requirement.
+----------------------------------------------------------------------
+
+--- FINDING 6 of 6 (ID: F006) --------------------
+Severity: 		High
+Category: 		Semantic and Context
+Confidence: 		0.9 / 1.0
+Sources: 		conops.pdf & sdd.pdf
+
+[Detailed Description]
+   > The ConOps document mentions that the system will not support external integrations with third-party mobile notification services, but this is not mentioned in the SDD.
+----------------------------------------------------------------------

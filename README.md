@@ -14,14 +14,12 @@ Before you begin, ensure you have the following installed on your system:
 
 Python 3.10+ and PyTorch
 
-Ollama - Follow the instructions at ollama.ai to install the Ollama application. After installation, download the necessary models by running these commands in your terminal:
+Ollama - Follow the instructions at https://ollama.com/ to install the Ollama application. After installation, download the necessary models by running these commands in your terminal:
 
 ```
 ollama pull llama3.1:8b
 ollama pull nomic-embed-text
 ```
-
-Place all the PDF documents you want to use as your knowledge base inside the PDFs folder. 
 
 ## 4. Installation
 Follow these steps to set up the project:
@@ -53,13 +51,18 @@ pip install -r requirements.txt
 ```
 
 ## 5. Usage
+
+Place all the PDF documents you want to use as your knowledge base inside the PDFs folder. 
+
 To run the SECC application, simply execute the main Python script from your terminal:
 ```
-python se_artifact.py
+python secc.py
 ```
+
+The report will be output as analysis_report.txt
 
 ## 6. File Descriptions
 
-se_artifact.py: The SECC application script using full context.
+secc.py: The SECC application script using all PDF data.
 
 rag_app.py: The RAG application script. This file contains all the logic for document ingestion, vectorization, and the RAG query-answering loop.

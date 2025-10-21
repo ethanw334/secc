@@ -5,13 +5,12 @@ from marker.converters.pdf import PdfConverter
 from marker.models import create_model_dict
 from marker.output import text_from_rendered
 from ollama import chat
-
-import time # Import time for timestamp generation
-import uuid # Import uuid for simple ID generation
-import datetime # Import datetime for readable timestamp
-
+import uuid 
+import datetime 
 import sqlite3
 import hashlib
+import sys
+import gc
 
 # Select Model and PDF Directory
 LLM = 'llama3.1:8b'
@@ -20,6 +19,9 @@ PDF_DIRECTORY = r'PDFs'
 # --- Database Configuration ---
 DATABASE_NAME = 'secc_artifacts.db'
 METADATA_TABLE = 'artifact_log'
+
+# Output Report
+REPORT_FILENAME = "analysis_report.txt"
 
 # ==============================================================================
 # 1. DATA STRUCTURES (Pydantic Models and Enums)
@@ -44,7 +46,6 @@ class FindingsList(BaseModel):
 
 # Generate the JSON schema for the LLM
 json_schema = FindingsList.model_json_schema()
-
 
 # Define the structure for storing document metadata (Simulates Local DB)
 class ArtifactMetadata(BaseModel):
@@ -148,7 +149,6 @@ def get_pdfs_in_directory(directory_path, converter: PdfConverter):
     """
     pdf_contents = {}
     
-    # ... (Directory checks remain the same) ...
     if not os.path.isdir(directory_path):
         print(f"Error: Directory not found at {directory_path}")
         return pdf_contents
@@ -197,8 +197,8 @@ def get_pdfs_in_directory(directory_path, converter: PdfConverter):
                     AuthorPlaceholder="SECC_Uploader", 
                     UploadTimestamp=datetime.datetime.now().isoformat(),
                     FileSizeBytes=file_stats.st_size,
-                    ContentHash=content_hash, # Log the hash of the new content
-                    MarkdownContent=text # Log the new content
+                    ContentHash=content_hash,
+                    MarkdownContent=text 
                 )
                 log_metadata_to_db(metadata)
 
@@ -211,32 +211,48 @@ def get_pdfs_in_directory(directory_path, converter: PdfConverter):
     return pdf_contents
 
 
-def print_findings_list(findings_list: FindingsList):
+def print_findings_list(findings_list: FindingsList, output_file: str = None):
     """
-    Prints the list of findings in a clean, human-readable format.
+    Generates the list of findings in a clean, human-readable format 
+    and outputs it to the terminal or a specified file.
     """
     total_findings = len(findings_list.inconsistencies)
-    print("=" * 70)
-    print(f"| ANALYSIS REPORT: Found {total_findings} Inconsistencies |")
-    print("=" * 70)
+    
+    # 1. Determine the output destination
+    if output_file:
+        print(f"--- Writing analysis report to: {output_file} ---")
+        f = open(output_file, 'w', encoding='utf-8')
+    else:
+        f = sys.stdout # Default to terminal output
+        
+    def write_line(text=""):
+        f.write(text + '\n')
+
+    # 2. Replicate existing logic using write_line
+    write_line("=" * 70)
+    write_line(f"| ANALYSIS REPORT: Found {total_findings} Inconsistencies |")
+    write_line("=" * 70)
 
     for i, finding in enumerate(findings_list.inconsistencies, 1):
-        print(f"\n--- FINDING {i} of {total_findings} (ID: {finding.FindingID}) " + "-"*20)
+        write_line(f"\n--- FINDING {i} of {total_findings} (ID: {finding.FindingID}) " + "-"*20)
 
         # Basic metadata
-        print(f"Severity: \t\t{finding.SeverityLevel}")
-        print(f"Category: \t\t{finding.Category}")
-        print(f"Confidence: \t\t{finding.ConfidenceScore:.1f} / 1.0")
-        print(f"Sources: \t\t{' & '.join(finding.SourceArtifacts)}")
+        write_line(f"Severity: \t\t{finding.SeverityLevel}")
+        write_line(f"Category: \t\t{finding.Category}")
+        write_line(f"Confidence: \t\t{finding.ConfidenceScore:.1f} / 1.0")
+        write_line(f"Sources: \t\t{' & '.join(finding.SourceArtifacts)}")
 
         # Detailed text block
-        print("\n[Detailed Description]")
-        # Use an indented block for the finding text for better readability
+        write_line("\n[Detailed Description]")
         text_lines = finding.FindingText.split('\n')
         for line in text_lines:
-            print(f"  > {line.strip()}")
+            write_line(f"   > {line.strip()}")
 
-        print("-" * 70)
+        write_line("-" * 70)
+
+    # 3. Close the file if it was opened
+    if output_file:
+        f.close()
 
 # ==============================================================================
 # 3. MAIN EXECUTION LOGIC
@@ -254,6 +270,27 @@ if __name__ == "__main__":
     # 3.1 Ingest and format documents (FR 3.1)
     # Pass the initialized converter into the function
     artifact_contents = get_pdfs_in_directory(PDF_DIRECTORY, converter)
+
+    # --- VRAM Management: Manual Cleanup ---
+    print("Attempting to release Marker models from VRAM...")
+
+    # 1. Explicitly delete the converter object.
+    del converter 
+
+    # 2. Force the Python garbage collector to run.
+    gc.collect() 
+
+    # 3. Explicitly empty the CUDA cache (most effective VRAM cleanup)
+    try:
+        import torch
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+    except Exception as e:
+        # If torch is unavailable or fails, rely on system/gc
+        print(f"Warning: Could not explicitly empty CUDA cache. Error: {e}")
+
+    print("Marker model cleanup complete.")
+    # --- Marker VRAM is now cleared, making room for the LLM ---
 
     if not artifact_contents:
         print("Analysis terminated due to missing PDF content.")
@@ -299,11 +336,12 @@ Perform the cross-comparison audit based on your system instructions. Analyze th
             {'role': 'user', 'content': user_message}
         ],
         format=json_schema, 
-        options={'temperature': 0}
+        options={'temperature': 0, # more deterministic output
+                 'keep_alive': 0} # offloads model weights immediately after chat
     )
 
     # Validate and parse the JSON response into the Pydantic model
     inconsistencies = FindingsList.model_validate_json(response.message.content)
     
     # --- 6. Output Generation ---
-    print_findings_list(inconsistencies)
+    print_findings_list(inconsistencies, output_file=REPORT_FILENAME)

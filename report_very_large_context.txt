@@ -1,0 +1,1003 @@
+======================================================================
+| ANALYSIS REPORT: Found 100 Inconsistencies |
+======================================================================
+
+--- FINDING 1 of 100 (ID: 1) --------------------
+Severity: 		High
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.8 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The validation plan is theoretical and does not account for actual system implementation.
+----------------------------------------------------------------------
+
+--- FINDING 2 of 100 (ID: 2) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 3 of 100 (ID: 3) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 4 of 100 (ID: 4) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 5 of 100 (ID: 5) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 6 of 100 (ID: 6) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 7 of 100 (ID: 7) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 8 of 100 (ID: 8) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 9 of 100 (ID: 9) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 10 of 100 (ID: 10) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 11 of 100 (ID: 11) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 12 of 100 (ID: 12) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 13 of 100 (ID: 13) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 14 of 100 (ID: 14) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 15 of 100 (ID: 15) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 16 of 100 (ID: 16) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 17 of 100 (ID: 17) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 18 of 100 (ID: 18) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 19 of 100 (ID: 19) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 20 of 100 (ID: 20) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 21 of 100 (ID: 21) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 22 of 100 (ID: 22) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 23 of 100 (ID: 23) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 24 of 100 (ID: 24) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 25 of 100 (ID: 25) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 26 of 100 (ID: 26) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 27 of 100 (ID: 27) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 28 of 100 (ID: 28) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 29 of 100 (ID: 29) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 30 of 100 (ID: 30) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 31 of 100 (ID: 31) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 32 of 100 (ID: 32) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 33 of 100 (ID: 33) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 34 of 100 (ID: 34) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 35 of 100 (ID: 35) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 36 of 100 (ID: 36) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 37 of 100 (ID: 37) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 38 of 100 (ID: 38) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 39 of 100 (ID: 39) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 40 of 100 (ID: 40) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 41 of 100 (ID: 41) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 42 of 100 (ID: 42) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 43 of 100 (ID: 43) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 44 of 100 (ID: 44) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 45 of 100 (ID: 45) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 46 of 100 (ID: 46) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 47 of 100 (ID: 47) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 48 of 100 (ID: 48) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 49 of 100 (ID: 49) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 50 of 100 (ID: 50) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 51 of 100 (ID: 51) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 52 of 100 (ID: 52) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 53 of 100 (ID: 53) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 54 of 100 (ID: 54) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 55 of 100 (ID: 55) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 56 of 100 (ID: 56) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 57 of 100 (ID: 57) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 58 of 100 (ID: 58) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 59 of 100 (ID: 59) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 60 of 100 (ID: 60) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 61 of 100 (ID: 61) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 62 of 100 (ID: 62) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 63 of 100 (ID: 63) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 64 of 100 (ID: 64) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 65 of 100 (ID: 65) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 66 of 100 (ID: 66) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 67 of 100 (ID: 67) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 68 of 100 (ID: 68) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 69 of 100 (ID: 69) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 70 of 100 (ID: 70) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 71 of 100 (ID: 71) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 72 of 100 (ID: 72) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 73 of 100 (ID: 73) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 74 of 100 (ID: 74) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 75 of 100 (ID: 75) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 76 of 100 (ID: 76) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 77 of 100 (ID: 77) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 78 of 100 (ID: 78) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 79 of 100 (ID: 79) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 80 of 100 (ID: 80) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 81 of 100 (ID: 81) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 82 of 100 (ID: 82) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 83 of 100 (ID: 83) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 84 of 100 (ID: 84) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 85 of 100 (ID: 85) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 86 of 100 (ID: 86) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 87 of 100 (ID: 87) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 88 of 100 (ID: 88) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 89 of 100 (ID: 89) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 90 of 100 (ID: 90) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 91 of 100 (ID: 91) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 92 of 100 (ID: 92) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 93 of 100 (ID: 93) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 94 of 100 (ID: 94) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 95 of 100 (ID: 95) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 96 of 100 (ID: 96) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 97 of 100 (ID: 97) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 98 of 100 (ID: 98) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 99 of 100 (ID: 99) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
+
+--- FINDING 100 of 100 (ID: 100) --------------------
+Severity: 		Medium
+Category: 		Interface, Safety, and Cyber
+Confidence: 		0.7 / 1.0
+Sources: 		VandV.pdf
+
+[Detailed Description]
+   > The system validation plan does not account for the accuracy of risk scores calculation.
+----------------------------------------------------------------------
