@@ -1,63 +1,83 @@
 ======================================================================
-| ANALYSIS REPORT: Found 6 Inconsistencies |
+| ANALYSIS REPORT: Found 8 Inconsistencies |
 ======================================================================
 
---- FINDING 1 of 6 (ID: F001) --------------------
-Severity: 		High
+--- FINDING 1 of 8 (ID: FR-001) --------------------
+Severity: 		Medium
 Category: 		Semantic and Context
 Confidence: 		0.8 / 1.0
-Sources: 		conops.pdf & sdd.pdf
+Sources: 		conops.pdf & srs.pdf
 
 [Detailed Description]
-   > The ConOps document mentions real-time notifications and alerts, but the SDD does not address this feature.
+   > The conops document mentions real-time notifications and alerts, but the srs document does not include this requirement.
 ----------------------------------------------------------------------
 
---- FINDING 2 of 6 (ID: F002) --------------------
+--- FINDING 2 of 8 (ID: FR-002) --------------------
 Severity: 		High
 Category: 		Semantic and Context
 Confidence: 		0.9 / 1.0
 Sources: 		sdd.pdf & srs.pdf
 
 [Detailed Description]
-   > The SDD describes the Audio Alert Module, but the SRS only mentions an audible alarm without specifying a module.
+   > The sdd document describes the Audio Alert Module, but the srs document does not mention this module.
 ----------------------------------------------------------------------
 
---- FINDING 3 of 6 (ID: F003) --------------------
-Severity: 		Medium
-Category: 		Traceability
-Confidence: 		0.7 / 1.0
-Sources: 		srs.pdf & v&v.pdf
-
-[Detailed Description]
-   > The SRS specifies that the SHH shall encrypt all data transmissions using AES-256, but the V&V document does not include a test for this requirement.
-----------------------------------------------------------------------
-
---- FINDING 4 of 6 (ID: F004) --------------------
+--- FINDING 3 of 8 (ID: FR-003) --------------------
 Severity: 		Low
 Category: 		Semantic and Context
-Confidence: 		0.6 / 1.0
+Confidence: 		0.7 / 1.0
 Sources: 		conops.pdf & sdd.pdf
 
 [Detailed Description]
-   > The ConOps document states that the system will rely on Wi-Fi for all communication, but the SDD does not explicitly mention this.
+   > The conops document states that the system will rely on Wi-Fi for all communication, but the sdd document does not explicitly mention this.
 ----------------------------------------------------------------------
 
---- FINDING 5 of 6 (ID: F005) --------------------
+--- FINDING 4 of 8 (ID: FR-004) --------------------
+Severity: 		Medium
+Category: 		Traceability
+Confidence: 		0.6 / 1.0
+Sources: 		srs.pdf & v&v.pdf
+
+[Detailed Description]
+   > The srs document requires the SHH to trigger an alarm within 2 seconds of a security event, but the v&v document does not include this test case.
+----------------------------------------------------------------------
+
+--- FINDING 5 of 8 (ID: FR-005) --------------------
+Severity: 		Medium
+Category: 		Semantic and Context
+Confidence: 		0.8 / 1.0
+Sources: 		conops.pdf & sdd.pdf
+
+[Detailed Description]
+   > The conops document mentions the need for real-time notifications and alerts, but the sdd document does not address this requirement.
+----------------------------------------------------------------------
+
+--- FINDING 6 of 8 (ID: FR-006) --------------------
 Severity: 		High
+Category: 		Traceability
+Confidence: 		0.9 / 1.0
+Sources: 		srs.pdf & v&v.pdf
+
+[Detailed Description]
+   > The srs document requires the SHH to encrypt all data transmissions using AES-256, but the v&v document does not include this test case.
+----------------------------------------------------------------------
+
+--- FINDING 7 of 8 (ID: FR-007) --------------------
+Severity: 		Low
+Category: 		Semantic and Context
+Confidence: 		0.7 / 1.0
+Sources: 		conops.pdf & sdd.pdf
+
+[Detailed Description]
+   > The conops document states that the system will allow users to control lights, thermostats, and security cameras from a single interface, but the sdd document does not explicitly mention this.
+----------------------------------------------------------------------
+
+--- FINDING 8 of 8 (ID: FR-008) --------------------
+Severity: 		Medium
 Category: 		Traceability
 Confidence: 		0.8 / 1.0
 Sources: 		srs.pdf & v&v.pdf
 
 [Detailed Description]
-   > The SRS specifies that the SHH shall trigger an alarm within 2 seconds of a security event, but the V&V document does not include a test for this requirement.
-----------------------------------------------------------------------
-
---- FINDING 6 of 6 (ID: F006) --------------------
-Severity: 		High
-Category: 		Semantic and Context
-Confidence: 		0.9 / 1.0
-Sources: 		conops.pdf & sdd.pdf
-
-[Detailed Description]
-   > The ConOps document mentions that the system will not support external integrations with third-party mobile notification services, but this is not mentioned in the SDD.
+   > The srs document requires the SHH to trigger an audible alarm if the security camera sensor detects an event, but the v&v document does not include this test case.
 ----------------------------------------------------------------------
