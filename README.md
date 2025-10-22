@@ -7,7 +7,7 @@ This Systems Engineering Command Center is a offline-capable, Python-based appli
 ## 2. Features
 Local LLM Integration: Uses the Ollama framework to run open-source models (like llama3.1:8b) directly on your machine.
 
-GPU Acceleration: Automatically leverages a compatible GPU (if available) via the Ollama server for significantly faster performance.
+- GPU Acceleration: Automatically leverages a compatible GPU (if available) via the Ollama server for significantly faster performance.
 
 ## 3. Prerequisites
 Before you begin, ensure you have the following installed on your system:
@@ -24,13 +24,13 @@ ollama pull nomic-embed-text
 ## 4. Installation
 Follow these steps to set up the project:
 
-Clone the repository:
+- Clone the repository:
 
 ```
 git clone https: https://github.com/ethanw334/secc.git
 cd secc
 ```
-Create a virtual environment (recommended):
+- Create a virtual environment (recommended):
 
 ```
 python -m venv venv
@@ -44,8 +44,12 @@ venv\Scripts\activate
 ```
 source venv/bin/activate
 ```
-
-Install Python dependencies:
+- Alternatively with Conda:
+```
+conda create --name rag_env python=3.13
+conda activate rag_env
+```
+- Install Python dependencies:
 ```
 pip install -r requirements.txt
 ```
