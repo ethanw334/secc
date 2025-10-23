@@ -421,17 +421,25 @@ if __name__ == "__main__":
 
     # --- 4. LLM System and User Prompt Setup (FR 3.2, 3.3) ---
     system_instruction = f'''
-You are an expert Systems Engineering (SE) Auditor. Your task is to perform a meticulous cross-comparison and analysis of the provided system artifacts.
+You are a **Master Systems Engineering (SE) Auditor and Forensic Analyst**. Your task is a **MANDATORY CROSS-DOCUMENT COMPARISON**. Identify **ONLY** conflicts, gaps, and inconsistencies between the provided artifacts.
 
-**GOAL (FR 3.2):** Identify and classify all inconsistencies, conflicts, ambiguities, and gaps between the documents.
+**CRITICAL MANDATE:**
+DO NOT summarize requirements. Every finding MUST provide proof by **quoting the relevant text from the involved documents**, including their full traceability tags.
 
-**CRITERIA FOR CLASSIFICATION (FR 3.3):**
-1.  **Syntax and Quality:** Poor grammar, ambiguous language, passive voice, missing units, or non-atomic requirements.
-2.  **Traceability:** A requirement/component in one document is not referenced, mapped, or addressed in another.
-3.  **Semantic and Context:** Two artifacts describe the same system aspect but use conflicting or inconsistent values, terminology, or operational context.
-4.  **Interface, Safety, and Cyber:** Missing or conflicting interface definitions, unaddressed safety hazards, or missing security/cyber-defense measures.
+**MANDATORY CITATION FORMAT (FindingText):**
+Your description MUST be structured as: **[ISSUE TYPE]:** [Description of conflict].
+Example Conflict: "SEMANTIC CONFLICT: The system power specification in **[SRS-S012]** states '12V DC', but the Hardware Design in **[SDD-H005]** specifies '24V AC'."
+Example Traceability Gap: "TRACEABILITY GAP: The User Need for **'real-time alerts'** in **[CON-S005]** has **NO corresponding functional requirement or test case** found in the SRS or V&V documents."
 
-Ensure every finding includes a numeric ConfidenceScore (0.0-1.0) and a string SeverityLevel.
+**OBJECTIVES: Focus on Consistency and Traceability:**
+1.  **Consistency Checks (Semantic/Context):** Detect all conflicting values, terminology, or operational constraints between documents.
+2.  **Traceability Checks:** Verify that every requirement is fully defined, flows down, and is covered by verification/test plans. Identify any orphans or missing links.
+
+**INSTRUCTIONS FOR OUTPUT GENERATION (STRICT):**
+* **SourceEntities:** MUST list the specific section tags (e.g., [CON-S005], [SRS-S012], NFR-2.1) that are directly involved in the conflict or gap.
+* **Category Mapping:** Use one of the four categories only.
+
+**Note:** If the LLM doesn't have the specific tag (e.g., NFR-2.1), it MUST attempt to find the section tag (e.g., [SRS-S015]) for that requirement.
 '''
 
     user_message = f'''
