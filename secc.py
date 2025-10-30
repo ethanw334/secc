@@ -21,7 +21,7 @@ import chromadb
 # --- GLOBAL CONFIGURATION ---
 LLM = 'llama3.1:8b'
 EMBEDDING_MODEL = 'nomic-embed-text'
-PDF_DIRECTORY = r'PDFs'
+PDF_DIRECTORY = r'PDFs\Smart_Home' #r'PDFs'
 
 # --- Database & ChromaDB Configuration ---
 DATABASE_NAME = 'secc_artifacts.db'
@@ -55,7 +55,7 @@ class FindingsList(BaseModel):
 # Generate the JSON schema for the LLM
 json_schema = FindingsList.model_json_schema()
 
-# Define the structure for storing document metadata (Simulates Local DB)
+# Define the structure for storing document metadata
 class ArtifactMetadata(BaseModel):
     Filename: str = Field(description="Original uploaded filename.")
     VersionID: str = Field(description="Unique version identifier for this content state.")
@@ -347,7 +347,7 @@ def print_findings_list(findings_list: FindingsList, output_file: str = None):
     total_findings = len(findings_list.inconsistencies)
     
     if output_file:
-        print(f"--- Writing analysis report to: {output_file} ---")
+        print(f"\n--- Writing analysis report to: {output_file} ---")
         f = open(output_file, 'w', encoding='utf-8')
     else:
         f = sys.stdout 
@@ -395,7 +395,6 @@ if __name__ == "__main__":
     artifact_contents = get_pdfs_in_directory(PDF_DIRECTORY, converter) 
 
     # --- VRAM Management: Manual Cleanup (Marker) ---
-    print("\nAttempting to release Marker models from VRAM...")
     del converter 
     gc.collect() 
     try:
@@ -404,7 +403,6 @@ if __name__ == "__main__":
             torch.cuda.empty_cache()
     except:
         pass
-    print("Marker model cleanup complete.")
     
     if not artifact_contents:
         print("Analysis terminated due to missing PDF content.")
@@ -461,7 +459,7 @@ Perform the cross-comparison audit based on your system instructions. Analyze th
             {'role': 'user', 'content': user_message}
         ],
         format=json_schema, 
-        options={'temperature': 0, 
+        options={'temperature': 0, # deterministic output
                  'keep_alive': 0 # Instructs Ollama to offload the model immediately after this request
                  } 
     )
