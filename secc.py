@@ -1,5 +1,4 @@
 import os
-import re
 import datetime
 import uuid
 import hashlib
@@ -21,7 +20,7 @@ import chromadb
 # --- GLOBAL CONFIGURATION ---
 LLM = 'llama3.1:8b'
 EMBEDDING_MODEL = 'nomic-embed-text'
-PDF_DIRECTORY = r'PDFs\Smart_Home' #r'PDFs'
+PDF_DIRECTORY = r'PDFs'
 
 # --- Database & ChromaDB Configuration ---
 DATABASE_NAME = 'secc_artifacts.db'
@@ -42,6 +41,7 @@ SeverityEnum = Literal["Low", "Medium", "High", "Critical"]
 # Define the structure for a single finding object
 class Finding(BaseModel):
     FindingID: str = Field(description="Unique identifier for the finding (e.g., TRACE-001, SEM-002).")
+    # Change: SourceArtifacts now only needs the list of filenames, not the tags
     SourceArtifacts: List[str] = Field(description="List of artifacts (original filenames) involved in the issue.", min_length=1)
     FindingText: str = Field(description="A detailed description of the issue, conflict, or gap found during cross-comparison.")
     Category: CategoryEnum = Field(description="The classification of the issue, mapping to FR 3.3.")
@@ -69,7 +69,7 @@ class ArtifactMetadata(BaseModel):
 # 2. HELPER FUNCTIONS
 # ==============================================================================
 
-# --- Database Management ---
+# --- Database Management (No change needed here) ---
 def initialize_database():
     """Initializes the SQLite database and creates the metadata table with new columns."""
     conn = None
@@ -86,7 +86,7 @@ def initialize_database():
                 UploadTimestamp TEXT,
                 FileSizeBytes INTEGER,
                 ContentHash TEXT UNIQUE,  
-                MarkdownContent TEXT      
+                MarkdownContent TEXT       
             );
         """)
         
@@ -150,44 +150,11 @@ def check_for_cached_content(content_hash: str) -> Optional[str]:
         if conn:
             conn.close()
 
-# --- Markdown Processing ---
-def tag_markdown_sections(markdown_text: str, filename: str) -> str:
-    """
-    Scans Markdown text and injects a unique ID tag into every heading for traceability.
-    Format: [FILE_SECTION_ID], e.g., [CON-S001].
-    """
-    lines = markdown_text.split('\n')
-    tagged_lines = []
-    
-    # Use the first 3 letters of the filename for a unique prefix (e.g., CON)
-    prefix = filename.split('.')[0][:3].upper() 
-    section_counter = 0
-
-    # Regex to find any Markdown header (starts with 1-6 '#' symbols)
-    header_pattern = re.compile(r'^(#+)\s*(.*)') 
-
-    for line in lines:
-        match = header_pattern.match(line)
-        if match:
-            # Found a header line
-            section_counter += 1
-            
-            # Generate a unique ID: [FILE-S(SectionNumber)]
-            tag = f"[{prefix}-S{section_counter:03d}]"
-            
-            # Reconstruct the line: ### [TAG] Original Header Text
-            tagged_line = f"{match.group(1)} {tag} {match.group(2).strip()}"
-            tagged_lines.append(tagged_line)
-        else:
-            # Not a header, keep the line as is
-            tagged_lines.append(line)
-
-    return "\n".join(tagged_lines)
-
 # --- PDF Ingestion and Formatting (FR 3.1) ---
 def get_pdfs_in_directory(directory_path, converter: PdfConverter):
     """
-    Finds PDFs, caches the content, and converts/logs new content with traceability tags.
+    Finds PDFs, caches the content, and converts/logs new content.
+    The content is NOT tagged with section IDs anymore.
     """
     pdf_contents = {}
     
@@ -223,12 +190,9 @@ def get_pdfs_in_directory(directory_path, converter: PdfConverter):
                 print(f'New or updated content. Converting (Slow step) and logging to database...')
                 
                 # Marker conversion logic (The expensive step)
-                rendered = converter(pdf_path)
-                text_unprocessed, _, _ = text_from_rendered(rendered) 
-                
-                # --- APPLY TRACEABILITY TAGS ---
-                text = tag_markdown_sections(text_unprocessed, filename) 
-                
+                rendered = converter(pdf_path) 
+                text, _, _ = text_from_rendered(rendered) 
+                                
                 # 3. Collect Metadata and Log New Content to DB
                 file_stats = os.stat(pdf_path)
                 version_id = str(uuid.uuid4())[:8] 
@@ -251,7 +215,7 @@ def get_pdfs_in_directory(directory_path, converter: PdfConverter):
             
     return pdf_contents
 
-# --- Vectorization and RAG Prep (FR 3.4) ---
+# --- Vectorization and RAG Prep (FR 3.4) (Minor change to handle no tags) ---
 def create_vector_store(artifact_contents: dict, collection_name: str, embedding_model_name: str):
     """
     Chunks Markdown content, embeds the chunks using Ollama, and stores 
@@ -280,11 +244,10 @@ def create_vector_store(artifact_contents: dict, collection_name: str, embedding
     except Exception:
         pass # Ignore if collection is empty or new
         
-
     # 3. Process Each Artifact
     all_chunks: List[LangChainDocument] = []
     
-    # Define headers to split by. This relies on the tags we injected earlier.
+    # Define headers to split by. This is now based on structure, not tags.
     headers_to_split_on = [
         ("#", "SectionTitle"),
         ("##", "SectionTitle"),
@@ -303,9 +266,8 @@ def create_vector_store(artifact_contents: dict, collection_name: str, embedding
         doc_type = filename.split('.')[0].upper()
         
         for i, chunk in enumerate(chunks):
-            # Extract the actual traceability tag (e.g., [CON-S001])
-            tag_match = re.search(r'\[[A-Z]{3}-S\d{3}\]', chunk.page_content)
-            source_tag = tag_match.group(0).strip('[]') if tag_match else f"{doc_type}-P{i+1:03d}"
+            # page/chunk ID
+            source_tag = f"{doc_type}-P{i+1:03d}" 
             
             # Build final, rich metadata dictionary
             chunk.metadata.update({
@@ -338,7 +300,7 @@ def create_vector_store(artifact_contents: dict, collection_name: str, embedding
     
     print("Vector store successfully created and ready for RAG.")
 
-# --- Output Management ---
+# --- Output Management (UPDATE SourceArtifacts display) ---
 def print_findings_list(findings_list: FindingsList, output_file: str = None):
     """
     Generates the list of findings in a clean, human-readable format 
@@ -365,12 +327,12 @@ def print_findings_list(findings_list: FindingsList, output_file: str = None):
         write_line(f"Severity: \t\t{finding.SeverityLevel}")
         write_line(f"Category: \t\t{finding.Category}")
         write_line(f"Confidence: \t\t{finding.ConfidenceScore:.1f} / 1.0")
-        write_line(f"Sources: \t\t{' & '.join(finding.SourceArtifacts)}")
+        write_line(f"Involved Artifacts: \t{' & '.join(finding.SourceArtifacts)}")
 
         write_line("\n[Detailed Description]")
         text_lines = finding.FindingText.split('\n')
         for line in text_lines:
-            write_line(f"   > {line.strip()}")
+            write_line(f"  > {line.strip()}")
 
         write_line("-" * 70)
 
@@ -414,6 +376,7 @@ if __name__ == "__main__":
     
     # Format the contents into a single string for the final LLM cross-comparison
     document_context = ""
+    # ArtifactContents is used to get the filenames that the LLM needs to cite in FindingText
     for filename, content in artifact_contents.items():
         document_context += f"--- START OF ARTIFACT: {filename} ---\n{content}\n--- END OF ARTIFACT: {filename} ---\n\n"
 
@@ -422,22 +385,22 @@ if __name__ == "__main__":
 You are a **Master Systems Engineering (SE) Auditor and Forensic Analyst**. Your task is a **MANDATORY CROSS-DOCUMENT COMPARISON**. Identify **ONLY** conflicts, gaps, and inconsistencies between the provided artifacts.
 
 **CRITICAL MANDATE:**
-DO NOT summarize requirements. Every finding MUST provide proof by **quoting the relevant text from the involved documents**, including their full traceability tags.
+DO NOT summarize requirements. Every finding MUST provide proof by **quoting the relevant text from the involved documents**, and state the filename of the source document for the quote.
 
 **MANDATORY CITATION FORMAT (FindingText):**
 Your description MUST be structured as: **[ISSUE TYPE]:** [Description of conflict].
-Example Conflict: "SEMANTIC CONFLICT: The system power specification in **[SRS-S012]** states '12V DC', but the Hardware Design in **[SDD-H005]** specifies '24V AC'."
-Example Traceability Gap: "TRACEABILITY GAP: The User Need for **'real-time alerts'** in **[CON-S005]** has **NO corresponding functional requirement or test case** found in the SRS or V&V documents."
+Example Conflict: "SEMANTIC CONFLICT: The system power specification, quoted as **'The main system requires 12V DC power'** in **Smart_Home_Concept.pdf**, directly conflicts with the Hardware Design, quoted as **'The power supply shall deliver 24V AC'** in **Smart_Home_Requirements.pdf**."
+Example Traceability Gap: "TRACEABILITY GAP: The User Need for **'The user must receive real-time alerts on their mobile device'** in **Smart_Home_Concept.pdf** has **NO corresponding functional requirement or test case** found in the other artifacts."
 
 **OBJECTIVES: Focus on Consistency and Traceability:**
 1.  **Consistency Checks (Semantic/Context):** Detect all conflicting values, terminology, or operational constraints between documents.
 2.  **Traceability Checks:** Verify that every requirement is fully defined, flows down, and is covered by verification/test plans. Identify any orphans or missing links.
 
 **INSTRUCTIONS FOR OUTPUT GENERATION (STRICT):**
-* **SourceEntities:** MUST list the specific section tags (e.g., [CON-S005], [SRS-S012], NFR-2.1) that are directly involved in the conflict or gap.
+* **SourceArtifacts:** MUST list the full filenames (e.g., Smart_Home_Concept.pdf, Smart_Home_Requirements.pdf) that are directly involved in the conflict or gap.
 * **Category Mapping:** Use one of the four categories only.
 
-**Note:** If the LLM doesn't have the specific tag (e.g., NFR-2.1), it MUST attempt to find the section tag (e.g., [SRS-S015]) for that requirement.
+**Note:** Since there are no section tags (e.g., [SRS-S015]), you must use **quoted text and the filename** as proof of the conflict/gap.
 '''
 
     user_message = f'''
@@ -467,5 +430,5 @@ Perform the cross-comparison audit based on your system instructions. Analyze th
     # Validate and parse the JSON response into the Pydantic model
     inconsistencies = FindingsList.model_validate_json(response.message.content)
     
-    # --- 6. Output Generation ---
+    # --- 6. Output Generation (Uses the modified function) ---
     print_findings_list(inconsistencies, output_file=REPORT_FILENAME)
