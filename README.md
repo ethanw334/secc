@@ -70,3 +70,22 @@ The report will be output as analysis_report.txt
 secc.py: The SECC application script using all PDF data.
 
 rag_system.py: The RAG application script. This file contains all the logic for document ingestion, vectorization, and the RAG query-answering loop.
+
+
+## How to run with the frontend
+
+1. Start the backend
+```
+cd backend
+uvicorn main:app --reload
+```
+keep this terminal open
+
+2. Navigate to frontend 
+Open a new terminal
+navigate to frontend folder
+```
+cd frontend
+npm run dev
+```
+Open the link http://localhost:5173/ in browser to use app.

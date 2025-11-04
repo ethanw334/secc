@@ -1,0 +1,124 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#root {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  width: 100%;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:disabled {
+  background-color: #333;
+  color: #888;
+  cursor: not-allowed;
+}
+
+.card {
+  padding: 2em;
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+/* Log styles */
+.log-container {
+  background-color: #000;
+  color: #0f0;
+  font-family: 'Courier New', Courier, monospace;
+  padding: 1rem;
+  border-radius: 4px;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #333;
+}
+.log-container p {
+  margin: 0;
+  line-height: 1.2;
+  font-size: 0.9em;
+  white-space: pre-wrap;
+}
+.log-container p.error {
+  color: #f00;
+  font-weight: bold;
+}
+
+/* Results styles */
+.finding {
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.finding-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.finding-id {
+  font-weight: bold;
+  font-family: monospace;
+  font-size: 1.1em;
+}
+.finding-severity {
+  padding: 0.25em 0.75em;
+  border-radius: 12px;
+  font-size: 0.9em;
+  font-weight: 500;
+}
+.finding-text {
+  background-color: #2a2a2a;
+  padding: 0.75rem;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  line-height: 1.4;
+}
+/* --- Spinner Animation --- */
+.spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  /* Adjust border thickness */
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff; /* This is the moving part */
+  animation: spin 1s linear infinite;
+  /* Aligns spinner with text */
+  vertical-align: -0.125em;
+  margin-right: 0.5em;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
