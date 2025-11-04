@@ -2,4 +2,8 @@ chroma_db/
 secc_artifacts.db
 .DS_Store
 analysis_report.txt
+Old/
 __pycache__/
+*.pyc
+*.db
+*.sqlite3

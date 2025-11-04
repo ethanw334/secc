@@ -21,7 +21,7 @@ function FileUpload({ files, onFilesSelected }) {
         {isDragActive ? (
           <p>Drop the PDFs here ...</p>
         ) : (
-          <p>Drag 'n' drop PDF files here, or click to select files</p>
+          <p>Drag and drop PDF files here, or click to select files</p>
         )}
       </div>
       {files.length > 0 && (

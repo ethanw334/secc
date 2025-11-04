@@ -115,8 +115,8 @@ function App() {
 
   return (
     <>
-      <h1>Systems Engineering Document Analyzer</h1>
-      <p>Upload two or more PDF artifacts (e.g., requirements, design, test plans) to analyze them for conflicts, gaps, and inconsistencies.</p>
+      <h1>Systems Engineering Command Center (SECC)</h1>
+      <p>Upload system PDF files for conflict, gap, and inconsistency analysis.</p>
 
       {status === APP_STATUS.IDLE && (
         <FileUpload files={files} onFilesSelected={setFiles} />

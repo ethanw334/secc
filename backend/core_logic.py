@@ -49,6 +49,7 @@ Example Traceability Gap: "TRACEABILITY GAP: The User Need for **'The user must 
 **INSTRUCTIONS FOR OUTPUT GENERATION (STRICT):**
 * **SourceArtifacts:** MUST list the full filenames (e.g., Smart_Home_Concept.pdf, Smart_Home_Requirements.pdf) that are directly involved in the conflict or gap.
 * **Category Mapping:** Use one of the four categories only.
+* **ConfidenceScore:** MUST be a floating-point number between 0.0 (low confidence) and 1.0 (high confidence). **DO NOT use percentages.**
 
 **Note:** Since there are no section tags (e.g., [SRS-S015]), you must use **quoted text and the filename** as proof of the conflict/gap.
 '''
