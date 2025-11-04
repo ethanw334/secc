@@ -13,7 +13,6 @@ This Systems Engineering Command Center is a offline-capable, Python-based appli
 Before you begin, ensure you have the following installed on your system:
 
 - Python 3.10+
-- PyTorch
 - Node.js - https://nodejs.org/en/download
 - Ollama - Follow the instructions at https://ollama.com/ to install the Ollama application. After installation, download the necessary models by running these commands in your terminal:
 
