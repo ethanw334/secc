@@ -50,8 +50,6 @@ Example Traceability Gap: "TRACEABILITY GAP: The User Need for **'The user must 
 * **SourceArtifacts:** MUST list the full filenames (e.g., Smart_Home_Concept.pdf, Smart_Home_Requirements.pdf) that are directly involved in the conflict or gap.
 * **Category Mapping:** Use one of the four categories only.
 * **ConfidenceScore:** MUST be a floating-point number between 0.0 (low confidence) and 1.0 (high confidence). **DO NOT use percentages.**
-
-**Note:** Since there are no section tags (e.g., [SRS-S015]), you must use **quoted text and the filename** as proof of the conflict/gap.
 '''
 
 # ==============================================================================
@@ -65,7 +63,6 @@ SeverityEnum = Literal["Low", "Medium", "High", "Critical"]
 # Define the structure for a single finding object
 class Finding(BaseModel):
     FindingID: str = Field(description="Unique identifier for the finding (e.g., TRACE-001, SEM-002).")
-    # Change: SourceArtifacts now only needs the list of filenames, not the tags
     SourceArtifacts: List[str] = Field(description="List of artifacts (original filenames) involved in the issue.", min_length=1)
     FindingText: str = Field(description="A detailed description of the issue, conflict, or gap found during cross-comparison.")
     Category: CategoryEnum = Field(description="The classification of the issue, mapping to FR 3.3.")

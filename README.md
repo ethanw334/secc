@@ -14,7 +14,7 @@ Before you begin, ensure you have the following installed on your system:
 
 - Python 3.10+
 - PyTorch
-- Node.js
+- Node.js - https://nodejs.org/en/download
 - Ollama - Follow the instructions at https://ollama.com/ to install the Ollama application. After installation, download the necessary models by running these commands in your terminal:
 
 ```
@@ -37,19 +37,20 @@ cd secc
 python -m venv venv
 ```
 
-### On Windows
+#### On Windows
 ```
 venv\Scripts\activate
 ```
-### On macOS/Linux
+#### On macOS/Linux
 ```
 source venv/bin/activate
 ```
 - Alternatively with Conda:
 ```
-conda create --name rag_env python=3.13
-conda activate rag_env
+conda create --name secc_env python=3.13
+conda activate secc_env
 ```
+- Install PyTorch - https://pytorch.org/
 - Install Python dependencies:
 ```
 pip install -r requirements.txt
@@ -73,7 +74,7 @@ secc.py: The SECC application script using all PDF data.
 rag_system.py: The RAG application script. This file contains all the logic for document ingestion, vectorization, and the RAG query-answering loop.
 
 
-## How to run with the frontend
+## 7. How to run frontend
 
 1. Start the backend:
 ```
@@ -82,7 +83,7 @@ uvicorn main:app --reload
 ```
 and keep this terminal open.
 
-2. Open a new terminal and navigate to frontend folder.
+2. Open a new terminal and navigate to frontend folder:
 ```
 cd frontend
 npm run dev

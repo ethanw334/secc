@@ -113,6 +113,33 @@ function App() {
     }
   };
 
+  const renderAnalyzeButtonContent = () => {
+    switch (status) {
+      case APP_STATUS.IDLE:
+        return `Analyze ${files.length} File(s)`;
+      case APP_STATUS.UPLOADING:
+        return (
+          <>
+            <span className="spinner" />
+            Uploading...
+          </>
+        );
+      case APP_STATUS.PROCESSING:
+        return (
+          <>
+            <span className="spinner" />
+            Analyzing...
+          </>
+        );
+      case APP_STATUS.COMPLETE:
+        return 'Analysis Complete';
+      case APP_STATUS.ERROR:
+        return 'Analysis Failed';
+      default:
+        return 'Analyze';
+    }
+  };
+
   return (
     <>
       <h1>Systems Engineering Command Center (SECC)</h1>
@@ -133,9 +160,15 @@ function App() {
       <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem' }}>
         <button
           onClick={handleAnalyzeClick}
-          disabled={files.length === 0 || status !== APP_STATUS.IDLE}
+          disabled={status !== APP_STATUS.IDLE || files.length === 0}
+          style={{ 
+            minWidth: '200px', 
+            display: 'inline-flex', 
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
         >
-          {status === APP_STATUS.IDLE ? `Analyze ${files.length} File(s)` : 'Analysis in Progress...'}
+          {renderAnalyzeButtonContent()}
         </button>
 
         {status !== APP_STATUS.IDLE && (
