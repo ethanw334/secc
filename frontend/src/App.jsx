@@ -20,6 +20,7 @@ function App() {
   const [status, setStatus] = useState(APP_STATUS.IDLE);
   const [logs, setLogs] = useState([]);
   const [findings, setFindings] = useState(null);
+  const [healthReport, setHealthReport] = useState(null);
   const ws = useRef(null);
 
   // Effect to clean up WebSocket on unmount
@@ -77,7 +78,8 @@ function App() {
           addLog(msg.message);
         } else if (msg.type === 'result') {
           addLog('Analysis complete! Results received.');
-          setFindings(msg.data);
+          setFindings(msg.data.findings);
+          setHealthReport(msg.data.health_report);
           setStatus(APP_STATUS.COMPLETE);
           ws.current.close();
         }
@@ -108,6 +110,7 @@ function App() {
     setStatus(APP_STATUS.IDLE);
     setLogs([]);
     setFindings(null);
+    setHealthReport(null);
     if (ws.current) {
       ws.current.close();
     }
@@ -151,6 +154,27 @@ function App() {
       
       {status !== APP_STATUS.IDLE && (
         <AnalysisView logs={logs} />
+      )}
+
+      {status === APP_STATUS.COMPLETE && healthReport && (
+        <div className="card health-report-card">
+          <h3>Overall Health Report</h3>
+          <div className="health-grid">
+            <div className="health-score-container">
+              <span className="health-score">{healthReport.score}</span>
+              <span className="health-score-label">/ 100</span>
+            </div>
+            <div className="health-summary">
+              <p>Found <strong>{healthReport.total_findings}</strong> total issues across {files.length} documents.</p>
+              <div className="health-counts">
+                <span><strong style={{color: '#ff4d4d'}}>Critical:</strong> {healthReport.critical_count}</span>
+                <span><strong style={{color: '#ffa500'}}>High:</strong> {healthReport.high_count}</span>
+                <span><strong style={{color: '#ffd700', colorScheme: 'light'}}>Medium:</strong> {healthReport.medium_count}</span>
+                <span><strong style={{color: '#52c41a'}}>Low:</strong> {healthReport.low_count}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {status === APP_STATUS.COMPLETE && findings && (

@@ -122,3 +122,48 @@ button:disabled {
     transform: rotate(360deg);
   }
 }
+/* --- Health Report --- */
+.health-report-card {
+  border: 1px solid #646cff;
+  background-color: #1a1a1a;
+}
+
+.health-grid {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.health-score-container {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  background-color: #2a2a2a;
+  border-radius: 8px;
+  padding: 1.5rem 2rem;
+  border: 1px solid #444;
+}
+
+.health-score {
+  font-size: 3.5rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.health-score-label {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #aaa;
+  margin-left: 0.5rem;
+}
+
+.health-summary p {
+  margin-top: 0;
+  font-size: 1.1em;
+}
+
+.health-counts {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 1em;
+}

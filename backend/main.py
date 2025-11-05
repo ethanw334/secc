@@ -51,6 +51,43 @@ async def create_upload_session(files: List[UploadFile] = File(...)):
             
     return {"session_id": session_id}
 
+def calculate_health_report(findings_list: core_logic.FindingsList) -> dict:
+    """
+    Calculates a risk-based health score from the list of findings.
+    """
+    # 1. Define penalty weights for each severity
+    severity_weights = {
+        "Low": 1,
+        "Medium": 2,
+        "High": 3,
+        "Critical": 4 
+    }
+
+    total_risk_score = 0
+    severity_counts = {"Critical": 0, "High": 0, "Medium": 0, "Low": 0}
+
+    for finding in findings_list.inconsistencies:
+        weight = severity_weights.get(finding.SeverityLevel, 0)
+        confidence = finding.ConfidenceScore
+
+        # 2. Add to total risk (penalty * confidence)
+        total_risk_score += (weight * confidence)
+
+        # 3. Tally counts for the report
+        severity_counts[finding.SeverityLevel] += 1
+
+    # 4. Convert risk score to a 0-100 health score
+    # We use a simple subtraction, capping at 0.
+    health_score = max(0, 100 - total_risk_score)
+
+    return {
+        "score": round(health_score, 1),
+        "total_findings": len(findings_list.inconsistencies),
+        "critical_count": severity_counts["Critical"],
+        "high_count": severity_counts["High"],
+        "medium_count": severity_counts["Medium"],
+        "low_count": severity_counts["Low"],
+    }
 
 # --- WebSocket Endpoint: Analysis ---
 @app.websocket("/ws/analysis")
@@ -198,12 +235,22 @@ Perform the cross-comparison audit based on your system instructions. Analyze th
 
         response = await asyncio.to_thread(run_ollama_sync)
         
+        # --- THIS IS THE NEW CODE ---
         await send_log("LLM response received. Validating...")
         inconsistencies = core_logic.FindingsList.model_validate_json(response.message.content)
-        
+
+        await send_log("Calculating health score...")
+        health_report = calculate_health_report(inconsistencies)
+
         # --- 6. Send Result ---
+        # We now send a combined object with both findings and the report
+        response_data = {
+            "findings": inconsistencies.model_dump(),
+            "health_report": health_report
+        }
+
         await send_log("Analysis complete. Sending results.")
-        await websocket.send_json({"type": "result", "data": inconsistencies.model_dump()})
+        await websocket.send_json({"type": "result", "data": response_data})
         
         # --- 7. Cleanup ---
         await send_log(f"Cleaning up session {session_id}.")
