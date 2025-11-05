@@ -157,7 +157,7 @@ function App() {
       )}
 
       {status === APP_STATUS.COMPLETE && healthReport && (
-        <div className="card health-report-card">
+        <div className={`card health-report-card ${healthReport.state_level}`}>
           <h3>Overall Health Report</h3>
           <div className="health-grid">
             <div className="health-score-container">
@@ -165,6 +165,9 @@ function App() {
               <span className="health-score-label">/ 100</span>
             </div>
             <div className="health-summary">
+              {/* This is the new message! */}
+              <p className="health-state-message">{healthReport.state_message}</p>
+              
               <p>Found <strong>{healthReport.total_findings}</strong> total issues across {files.length} documents.</p>
               <div className="health-counts">
                 <span><strong style={{color: '#ff4d4d'}}>Critical:</strong> {healthReport.critical_count}</span>

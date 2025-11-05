@@ -167,3 +167,53 @@ button:disabled {
   gap: 1.5rem;
   font-size: 1em;
 }
+
+/* --- Health Report --- */
+.health-report-card {
+  /* This default border will be overridden */
+  border: 2px solid #646cff; 
+  background-color: #1a1a1a;
+  transition: border-color 0.3s ease;
+}
+
+/* --- The new color-coding classes --- */
+.health-report-card.pass {
+  border-color: #52c41a; /* Green */
+}
+.health-report-card.review {
+  border-color: #ffd700; /* Yellow */
+}
+.health-report-card.danger {
+  border-color: #ff4d4d; /* Red */
+}
+
+/* --- The new message style --- */
+.health-state-message {
+  font-size: 1.2em;
+  font-weight: 500;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  background-color: #2a2a2a;
+}
+/* Match message color to border color */
+.health-report-card.pass .health-state-message {
+  color: #52c41a;
+}
+.health-report-card.review .health-state-message {
+  color: #ffd700;
+  color-scheme: light;
+}
+.health-report-card.danger .health-state-message {
+  color: #ff4d4d;
+}
+
+
+.health-grid {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* ... (rest of your health report styles) ... */

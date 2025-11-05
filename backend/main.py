@@ -59,8 +59,8 @@ def calculate_health_report(findings_list: core_logic.FindingsList) -> dict:
     severity_weights = {
         "Low": 1,
         "Medium": 2,
-        "High": 3,
-        "Critical": 4 
+        "High": 4,
+        "Critical": 8 
     }
 
     total_risk_score = 0
@@ -80,6 +80,24 @@ def calculate_health_report(findings_list: core_logic.FindingsList) -> dict:
     # We use a simple subtraction, capping at 0.
     health_score = max(0, 100 - total_risk_score)
 
+    # --- 5. Determine state message and level based on score ---
+    state_message = ""
+    state_level = ""
+    
+    if health_score == 100:
+        state_message = "Excellent. No issues found."
+        state_level = "pass"
+    elif health_score >= 85:
+        state_message = "Good. Only minor issues found."
+        state_level = "pass"
+    elif health_score >= 60:
+        state_message = "Needs Review. Moderate issues detected."
+        state_level = "review"
+    else:
+        state_message = "Critical Issues. System health is low."
+        state_level = "danger"
+
+    # --- 6. NEW: Add new fields to the return dictionary ---
     return {
         "score": round(health_score, 1),
         "total_findings": len(findings_list.inconsistencies),
@@ -87,6 +105,8 @@ def calculate_health_report(findings_list: core_logic.FindingsList) -> dict:
         "high_count": severity_counts["High"],
         "medium_count": severity_counts["Medium"],
         "low_count": severity_counts["Low"],
+        "state_message": state_message,  
+        "state_level": state_level       
     }
 
 # --- WebSocket Endpoint: Analysis ---
