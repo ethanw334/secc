@@ -53,32 +53,49 @@ async def create_upload_session(files: List[UploadFile] = File(...)):
 
 def calculate_health_report(findings_list: core_logic.FindingsList) -> dict:
     """
-    Calculates a risk-based health score from the list of findings.
+    Calculates a Multi-Attribute Utility Theory (MAUT) risk-based health score from the list of findings.
     """
-    # 1. Define penalty weights for each severity
-    severity_weights = {
-        "Low": 1,
-        "Medium": 2,
-        "High": 4,
-        "Critical": 8 
+    # weights for each category (must sum to 1)
+    weights = {
+        "Syntax": 0.25,
+        "Traceability": 0.25,
+        "Semantic": 0.25,
+        "Cybersecurity": 0.25 
+    }
+    
+    # maximum acceptable/expected number of findings for category R (each must be > 0)
+    max_findings = {
+        "Syntax": 10,
+        "Traceability": 10,
+        "Semantic": 10,
+        "Cybersecurity": 10
     }
 
-    total_risk_score = 0
-    severity_counts = {"Critical": 0, "High": 0, "Medium": 0, "Low": 0}
+    finding_counts = {
+        "Syntax": 0,
+        "Traceability": 0,
+        "Semantic": 0,
+        "Cybersecurity": 0
+    }
+
+    severity_counts = {
+        "Low": 0,
+        "Medium": 0,
+        "High": 0,
+        "Critical": 0
+    }
 
     for finding in findings_list.inconsistencies:
-        weight = severity_weights.get(finding.SeverityLevel, 0)
-        confidence = finding.ConfidenceScore
-
-        # 2. Add to total risk (penalty * confidence)
-        total_risk_score += (weight * confidence)
-
-        # 3. Tally counts for the report
         severity_counts[finding.SeverityLevel] += 1
+        finding_counts[finding.Category] += 1
+
+    r_category = {category: finding_counts[category] / max_findings[category] for category in max_findings}
+
+    h = sum(weights[category] * r_category[category] for category in weights)
 
     # 4. Convert risk score to a 0-100 health score
     # We use a simple subtraction, capping at 0.
-    health_score = max(0, 100 - total_risk_score)
+    health_score = max((1 - h) * 100, 0)
 
     # --- 5. Determine state message and level based on score ---
     state_message = ""
@@ -88,9 +105,9 @@ def calculate_health_report(findings_list: core_logic.FindingsList) -> dict:
         state_message = "Excellent. No issues found."
         state_level = "pass"
     elif health_score >= 85:
-        state_message = "Good. Only minor issues found."
+        state_message = "Healthy. Only minor issues found."
         state_level = "pass"
-    elif health_score >= 60:
+    elif health_score >= 70:
         state_message = "Needs Review. Moderate issues detected."
         state_level = "review"
     else:
