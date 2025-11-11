@@ -13,7 +13,7 @@ from chromadb.config import Settings
 document_dir = "PDFs"
 
 # Select Models
-LLM_MODEL = "llama3.1:8b"
+LLM_MODEL = "qwen3:8b"
 EMBEDDING_MODEL = "nomic-embed-text"
 
 # Set up basic logging

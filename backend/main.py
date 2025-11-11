@@ -55,46 +55,37 @@ def calculate_health_report(findings_list: core_logic.FindingsList) -> dict:
     """
     Calculates a Multi-Attribute Utility Theory (MAUT) risk-based health score from the list of findings.
     """
-    # weights for each category (must sum to 1)
+    # weights for each severity (must sum to 1)
     weights = {
-        "Syntax": 0.25,
-        "Traceability": 0.25,
-        "Semantic": 0.25,
-        "Cybersecurity": 0.25 
+        "Critical": 0.55,
+        "High": 0.25,
+        "Medium": 0.15,
+        "Low": 0.05 
     }
     
-    # maximum acceptable/expected number of findings for category R (each must be > 0)
+    # maximum acceptable/expected number of findings for severity level (each must be > 0)
     max_findings = {
-        "Syntax": 10,
-        "Traceability": 10,
-        "Semantic": 10,
-        "Cybersecurity": 10
-    }
-
-    finding_counts = {
-        "Syntax": 0,
-        "Traceability": 0,
-        "Semantic": 0,
-        "Cybersecurity": 0
+        "Critical": 1,
+        "High": 5,
+        "Medium": 10,
+        "Low": 20
     }
 
     severity_counts = {
-        "Low": 0,
-        "Medium": 0,
+        "Critical": 0,
         "High": 0,
-        "Critical": 0
+        "Medium": 0,
+        "Low": 0
     }
 
     for finding in findings_list.inconsistencies:
         severity_counts[finding.SeverityLevel] += 1
-        finding_counts[finding.Category] += 1
+        
+    r = {severity: severity_counts[severity] / max_findings[severity] for severity in max_findings}
 
-    r_category = {category: finding_counts[category] / max_findings[category] for category in max_findings}
-
-    h = sum(weights[category] * r_category[category] for category in weights)
+    h = sum(weights[severity] * r[severity] for severity in weights)
 
     # 4. Convert risk score to a 0-100 health score
-    # We use a simple subtraction, capping at 0.
     health_score = max((1 - h) * 100, 0)
 
     # --- 5. Determine state message and level based on score ---
@@ -153,9 +144,6 @@ async def websocket_endpoint(websocket: WebSocket):
             await send_log(f"Error: Session directory not found: {session_dir}")
             return
 
-        # --- This is the logic from your script's main block, ---
-        # --- adapted for the async WebSocket flow. ---
-
         # 3.0 Initialize PDF Converter
         await send_log("Initializing PDF converter (Marker)... This may take a moment.")
         converter = core_logic.PdfConverter(
@@ -163,8 +151,6 @@ async def websocket_endpoint(websocket: WebSocket):
         )
 
         # 3.1 Ingest and format documents
-        # We must refactor the get_pdfs_in_directory to accept our log function
-        
         artifact_contents = {}
         pdf_paths = [os.path.join(session_dir, f) for f in os.listdir(session_dir) if f.lower().endswith('.pdf')]
         
@@ -280,7 +266,7 @@ Perform the cross-comparison audit based on your system instructions. Analyze th
         health_report = calculate_health_report(inconsistencies)
 
         # --- 6. Send Result ---
-        # We now send a combined object with both findings and the report
+        # send a combined object with both findings and the report
         response_data = {
             "findings": inconsistencies.model_dump(),
             "health_report": health_report

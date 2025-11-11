@@ -5,7 +5,7 @@
 This Systems Engineering Command Center is a offline-capable, Python-based application that processes user-uploaded PDF technical artifacts and automatically performs cross-document consistency checks. It generates a final report summarizing all identified context issues and inconsistencies across the document set.
 
 ## 2. Features
-- Local LLM Integration: Uses the Ollama framework to run open-source models (like llama3.1:8b) directly on your machine.
+- Local LLM Integration: Uses the Ollama framework to run open-source models (like qwen3:8b) directly on your machine.
 
 - GPU Acceleration: Automatically leverages a compatible GPU (if available) via the Ollama server for significantly faster performance.
 
@@ -17,7 +17,7 @@ Before you begin, ensure you have the following installed on your system:
 - Ollama - Follow the instructions at https://ollama.com/ to install the Ollama application. After installation, download the necessary models by running these commands in your terminal:
 
 ```
-ollama pull llama3.1:8b
+ollama pull qwen3:8b
 ollama pull nomic-embed-text
 ```
 
