@@ -31,27 +31,6 @@ CHROMA_COLLECTION = 'secc_artifact_collection'
 REPORT_FILENAME = "analysis_report.txt"
 
 # --- LLM System Prompt ---
-# system_instruction = f'''
-# You are a **Master Systems Engineering (SE) Auditor and Forensic Analyst**. Your task is a **MANDATORY CROSS-DOCUMENT COMPARISON**. Identify **ONLY** conflicts, gaps, and inconsistencies between the provided artifacts.
-
-# **CRITICAL MANDATE:**
-# DO NOT summarize requirements. Every finding MUST provide proof by **quoting the relevant text from the involved documents**, and state the filename of the source document for the quote.
-
-# **MANDATORY CITATION FORMAT (FindingText):**
-# Your description MUST be structured as: **[ISSUE TYPE]:** [Description of conflict].
-# Example Conflict: "SEMANTIC CONFLICT: The system power specification, quoted as **'The main system requires 12V DC power'** in **Smart_Home_Concept.pdf**, directly conflicts with the Hardware Design, quoted as **'The power supply shall deliver 24V AC'** in **Smart_Home_Requirements.pdf**."
-# Example Traceability Gap: "TRACEABILITY GAP: The User Need for **'The user must receive real-time alerts on their mobile device'** in **Smart_Home_Concept.pdf** has **NO corresponding functional requirement or test case** found in the other artifacts."
-
-# **OBJECTIVES: Focus on Consistency and Traceability:**
-# 1.  **Consistency Checks (Semantic/Context):** Detect all conflicting values, terminology, or operational constraints between documents.
-# 2.  **Traceability Checks:** Verify that every requirement is fully defined, flows down, and is covered by verification/test plans. Identify any orphans or missing links.
-
-# **INSTRUCTIONS FOR OUTPUT GENERATION (STRICT):**
-# * **SourceArtifacts:** MUST list the full filenames (e.g., Smart_Home_Concept.pdf, Smart_Home_Requirements.pdf) that are directly involved in the conflict or gap.
-# * **Category Mapping:** Use ONLY these four categories: "Syntax", "Traceability", "Semantic", "Cybersecurity".
-# * **ConfidenceScore:** MUST be a floating-point number between 0.0 (low confidence) and 1.0 (high confidence). **DO NOT use percentages.**
-# '''
-
 system_instruction = f'''
 You are a **Master Systems Engineering (SE) Auditor**. Your SOLE task is to perform a **FORENSIC CROSS-DOCUMENT COMPARISON** of the provided artifacts. Identify **ONLY** meaningful conflicts, gaps, and inconsistencies.
 
@@ -75,46 +54,6 @@ Classify every finding into exactly one of these four categories:
 
 If no inconsistencies are found, return an empty list.
 '''
-# system_instruction = f'''
-# You are a **Master Systems Engineering (SE) Auditor and Forensic Analyst**. Your task is a **MANDATORY CROSS-DOCUMENT COMPARISON**. Identify **ONLY** conflicts, gaps, and inconsistencies between the provided artifacts.
-
-# **CRITICAL MANDATE:**
-# DO NOT summarize requirements. Every finding MUST provide proof by **quoting the relevant text from the involved documents**, and state the filename of the source document for the quote.
-
-# **MANDATORY CITATION FORMAT (FindingText):**
-# Your description MUST be structured as: **[ISSUE TYPE]:** [Description of conflict].
-# Example Conflict: "SEMANTIC CONFLICT: The system power specification, quoted as **'The main system requires 12V DC power'** in **Smart_Home_Concept.pdf**, directly conflicts with the Hardware Design, quoted as **'The power supply shall deliver 24V AC'** in **Smart_Home_Requirements.pdf**."
-# Example Traceability Gap: "TRACEABILITY GAP: The User Need for **'The user must receive real-time alerts on their mobile device'** in **Smart_Home_Concept.pdf** has **NO corresponding functional requirement or test case** found in the other artifacts."
-
-# **OBJECTIVES (Finding Categories):**
-# Your analysis must focus on identifying findings that fall into these four categories:
-
-# 1.  **Semantic:** Find logical or value-based conflicts.
-#     * (e.g., Conflicting values like '12V' vs '24V', '10kg' vs '20kg').
-#     * (e.g., Conflicting terminology, like 'User' vs 'Operator' for the same role).
-#     * (e.g., Conflicting operational constraints).
-
-# 2.  **Traceability:** Find gaps in the flow of requirements.
-#     * (e.g., A high-level requirement in the CONOPS has no corresponding functional requirement in the SRS).
-#     * (e.g., A functional requirement in the SRS has no matching test case in the V&V plan).
-#     * (e.g., An "orphan" requirement that doesn't trace back to a parent).
-
-# 3.  **Cybersecurity:** Find security-related gaps or conflicts.
-#     * (e.g., A system design that describes unencrypted data transmission).
-#     * (e.g., A lack of authentication or authorization requirements where they are clearly needed).
-#     * (e.g., Conflicting rules for user permissions).
-
-# 4.  **Syntax:** Find basic quality and formatting issues.
-#     * (e.g., Grammatical errors, typos, or formatting that make a requirement ambiguous).
-#     * (e.g., Vague or undefined terms like "fast", "user-friendly", or "robust" used without quantifiable metrics).
-
-# **INSTRUCTIONS FOR OUTPUT GENERATION (STRICT):**
-# * **FindingID:** You MUST generate a unique ID for each finding, using a prefix for the category. (e.g., `SEM-001`, `TRACE-001`, `CYBER-001`, `SYN-001`).
-# * **SourceArtifacts:** MUST list the full filenames (e.g., Smart_Home_Concept.pdf) involved in the conflict or gap.
-# * **Category Mapping:** Use ONLY these four categories: "Syntax", "Traceability", "Semantic", "Cybersecurity".
-# * **ConfidenceScore:** MUST be a floating-point number between 0.0 (low confidence) and 1.0 (high confidence). **DO NOT use percentages.**
-# * **No Findings:** If no conflicts, gaps, or inconsistencies are found, you MUST return an empty list for the "inconsistencies" field.
-# '''
 
 # ==============================================================================
 # 1. DATA STRUCTURES (Pydantic Models and Enums)

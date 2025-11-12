@@ -93,9 +93,6 @@ function App() {
 
       ws.current.onclose = () => {
   addLog('Connection closed.');
-  // We no longer set ERROR status here,
-  // as it races with the COMPLETE status set in onmessage.
-  // The onerror handler will catch actual errors.
 };
 
     } catch (error) {

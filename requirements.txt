@@ -5,5 +5,5 @@ langchain-text-splitters>=0.3,<0.4
 langchain-ollama>=0.2,<0.3
 pypdf
 fastapi
-uvicorn[standard]  # The 'standard' extras include websockets
-python-multipart   # For file uploads
+uvicorn[standard]
+python-multipart

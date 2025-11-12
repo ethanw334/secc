@@ -208,12 +208,8 @@ button:disabled {
 .health-report-card.danger .health-state-message {
   color: #ff4d4d;
 }
-
-
 .health-grid {
   display: flex;
   align-items: center;
   gap: 2rem;
 }
-
-/* ... (rest of your health report styles) ... */

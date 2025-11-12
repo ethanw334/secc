@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactMarkdown from 'react-markdown'; // <-- 1. IMPORT THE LIBRARY
+import ReactMarkdown from 'react-markdown';
 
 function ResultsDisplay({ findingsList }) {
   const { inconsistencies } = findingsList;
