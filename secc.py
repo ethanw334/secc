@@ -18,7 +18,7 @@ from langchain_core.documents import Document as LangChainDocument
 import chromadb
 
 # --- GLOBAL CONFIGURATION ---
-LLM = 'llama3.1:8b'
+LLM = 'qwen3:8b'
 EMBEDDING_MODEL = 'nomic-embed-text'
 PDF_DIRECTORY = r'PDFs'
 
