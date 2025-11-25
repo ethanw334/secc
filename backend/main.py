@@ -54,17 +54,28 @@ async def create_upload_session(files: List[UploadFile] = File(...)):
 @app.get("/models")
 def get_available_models():
     """
-    Fetches the list of locally downloaded models from Ollama.
+    Fetches the list of locally downloaded models from Ollama
+    and formats their size into GB.
     """
     try:
         response = ollama.list()
-        model_names = [m.model for m in response.models]
-        return {"models": model_names}
+        
+        models_data = []
+        for m in response.models:
+            # Convert bytes to Gigabytes (1000^3)
+            size_gb = m.size / (1000 ** 3)
+            
+            models_data.append({
+                "name": m.model,
+                "size_label": f"{size_gb:.1f} GB"
+            })
+            
+        return {"models": models_data}
         
     except Exception as e:
         print(f"Error fetching models: {e}")
         return {"models": []}
-
+    
 # --- WebSocket Endpoint: Analysis ---
 @app.websocket("/ws/analysis")
 async def websocket_endpoint(websocket: WebSocket):

@@ -29,16 +29,17 @@ function App() {
       .then(response => {
         const models = response.data.models;
         setLocalModels(models);
-        if (models.includes('qwen3:8b')) {
+        const hasQwen = models.find(m => m.name === 'qwen3:8b');
+        if (hasQwen) {
             setSelectedModel('qwen3:8b');
         } else if (models.length > 0) {
-            setSelectedModel(models[0]);
+            setSelectedModel(models[0].name);
         } else {
             setSelectedModel('gpt-5-mini');
         }
       })
       .catch(err => {
-        console.error("Failed to fetch local models", err);
+        console.error("Failed to fetch models", err);
         setSelectedModel('gpt-5-mini');
       });
   }, []);
@@ -219,9 +220,9 @@ function App() {
           <optgroup label="Local (Ollama)">
             {localModels.length === 0 && <option disabled>No local models found</option>}
             
-            {localModels.map((modelName) => (
-              <option key={modelName} value={modelName}>
-                {modelName}
+            {localModels.map((modelObj) => (
+              <option key={modelObj.name} value={modelObj.name}>
+                {modelObj.name} ({modelObj.size_label})
               </option>
             ))}
           </optgroup>
