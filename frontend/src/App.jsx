@@ -4,7 +4,6 @@ import FileUpload from './components/1-FileUpload';
 import AnalysisView from './components/2-AnalysisView';
 import ResultsDisplay from './components/3-ResultsDisplay';
 
-// Define constants
 const APP_STATUS = {
   IDLE: 'IDLE',
   UPLOADING: 'UPLOADING',
@@ -18,18 +17,30 @@ const API_URL = 'http://localhost:8000';
 function App() {
   const [files, setFiles] = useState([]);
   const [status, setStatus] = useState(APP_STATUS.IDLE);
+  const [selectedModel, setSelectedModel] = useState('qwen3:8b'); 
+  const [localModels, setLocalModels] = useState([]);
   const [logs, setLogs] = useState([]);
   const [findings, setFindings] = useState(null);
   const [healthReport, setHealthReport] = useState(null);
   const ws = useRef(null);
 
-  // Effect to clean up WebSocket on unmount
   useEffect(() => {
-    return () => {
-      if (ws.current) {
-        ws.current.close();
-      }
-    };
+    axios.get(`${API_URL}/models`)
+      .then(response => {
+        const models = response.data.models;
+        setLocalModels(models);
+        if (models.includes('qwen3:8b')) {
+            setSelectedModel('qwen3:8b');
+        } else if (models.length > 0) {
+            setSelectedModel(models[0]);
+        } else {
+            setSelectedModel('gpt-5-mini');
+        }
+      })
+      .catch(err => {
+        console.error("Failed to fetch local models", err);
+        setSelectedModel('gpt-5-mini');
+      });
   }, []);
 
   const addLog = (message, type = 'log') => {
@@ -51,7 +62,7 @@ function App() {
     });
 
     try {
-      // 1. HTTP Upload
+      // HTTP Upload
       const uploadResponse = await axios.post(`${API_URL}/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -62,13 +73,15 @@ function App() {
       addLog('Upload complete. Connecting to analysis server...');
       setStatus(APP_STATUS.PROCESSING);
 
-      // 2. WebSocket Connection
+      // WebSocket Connection
       ws.current = new WebSocket(`${API_URL.replace('http', 'ws')}/ws/analysis`);
 
       ws.current.onopen = () => {
         addLog('Connection open. Starting analysis...');
-        // Send the session_id to start the backend process
-        ws.current.send(JSON.stringify({ session_id: session_id }));
+        ws.current.send(JSON.stringify({ 
+          session_id: session_id,
+          model: selectedModel
+        }));
       };
 
       ws.current.onmessage = (event) => {
@@ -162,8 +175,15 @@ function App() {
               <span className="health-score-label">/ 100</span>
             </div>
             <div className="health-summary">
-              {/* This is the new message! */}
               <p className="health-state-message">{healthReport.state_message}</p>
+              <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem', fontSize: '0.9em', color: '#888' }}>
+                <span>
+                Time: <strong>{healthReport.execution_time}</strong>
+                </span>
+                <span>
+                Cost: <strong style={{ color: '#fff' }}>{healthReport.cost}</strong> <span style={{fontSize:'0.8em'}}>{healthReport.token_info}</span>
+                </span>
+              </div>
               
               <p>Found <strong>{healthReport.total_findings}</strong> total issues across {files.length} documents.</p>
               <div className="health-counts">
@@ -181,6 +201,33 @@ function App() {
         <ResultsDisplay findingsList={findings} />
       )}
       
+      {/* Dynamic Model Selector */}
+      <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+        <label style={{ marginRight: '10px', fontWeight: 'bold' }}>Select AI Model:</label>
+        <select 
+          value={selectedModel} 
+          onChange={(e) => setSelectedModel(e.target.value)}
+          disabled={status !== APP_STATUS.IDLE}
+          style={{ padding: '0.5rem', borderRadius: '4px', backgroundColor: '#333', color: '#fff', border: '1px solid #555' }}
+        >
+          {/* Cloud Options */}
+          <optgroup label="Cloud (High Performance)">
+            <option value="gpt-5-mini">OpenAI GPT-5 Mini</option>
+          </optgroup>
+
+          {/* Local Options */}
+          <optgroup label="Local (Ollama)">
+            {localModels.length === 0 && <option disabled>No local models found</option>}
+            
+            {localModels.map((modelName) => (
+              <option key={modelName} value={modelName}>
+                {modelName}
+              </option>
+            ))}
+          </optgroup>
+        </select>
+      </div>
+
       <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem' }}>
         <button
           onClick={handleAnalyzeClick}

@@ -7,3 +7,5 @@ pypdf
 fastapi
 uvicorn[standard]
 python-multipart
+openai
+python-dotenv

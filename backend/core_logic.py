@@ -16,11 +16,22 @@ from langchain_text_splitters import MarkdownHeaderTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_core.documents import Document as LangChainDocument
 import chromadb
+from dotenv import load_dotenv
+from openai import OpenAI
 
 # --- GLOBAL CONFIGURATION ---
 LLM = 'qwen3:8b' 
 EMBEDDING_MODEL = 'nomic-embed-text'
 PDF_DIRECTORY = r'PDFs'
+
+# --- OPENAI CONFIGURATION ---
+OPENAI_MODEL = 'gpt-5-mini'
+load_dotenv()
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+
+# Pricing per million tokens
+PRICE_GPT5_MINI_INPUT = 0.25
+PRICE_GPT5_MINI_OUTPUT = 2.00
 
 # --- Database & ChromaDB Configuration ---
 DATABASE_NAME = 'secc_artifacts.db'
@@ -93,7 +104,73 @@ class ArtifactMetadata(BaseModel):
 # 2. HELPER FUNCTIONS
 # ==============================================================================
 
-# --- Database Management (No change needed here) ---
+def calculate_health_report(findings_list: FindingsList) -> dict:
+    """
+    Calculates a Multi-Attribute Utility Theory (MAUT) risk-based health score from the list of findings.
+    """
+    # weights for each severity (must sum to 1)
+    weights = {
+        "Critical": 0.55,
+        "High": 0.25,
+        "Medium": 0.15,
+        "Low": 0.05 
+    }
+    
+    # maximum acceptable/expected number of findings for severity level
+    max_findings = {
+        "Critical": 1,
+        "High": 5,
+        "Medium": 10,
+        "Low": 20
+    }
+
+    # This dictionary will store the counts for the final report
+    severity_counts = {
+        "Low": 0,
+        "Medium": 0,
+        "High": 0,
+        "Critical": 0
+    }
+
+    for finding in findings_list.inconsistencies:
+        severity_counts[finding.SeverityLevel] += 1
+
+    # Use severity_counts to calculate the ratio r
+    r = {severity: severity_counts[severity] / max_findings[severity] for severity in max_findings}
+
+    h = sum(weights[severity] * r[severity] for severity in weights)
+
+    # Convert risk score to a 0-100 health score
+    health_score = max((1 - h) * 100, 0)
+
+    state_message = ""
+    state_level = ""
+    
+    if health_score == 100:
+        state_message = "Excellent. No issues found."
+        state_level = "pass"
+    elif health_score >= 85:
+        state_message = "Healthy. Only minor issues found."
+        state_level = "pass"
+    elif health_score >= 70:
+        state_message = "Needs Review. Moderate issues detected."
+        state_level = "review"
+    else:
+        state_message = "Critical Issues. System health is low."
+        state_level = "danger"
+
+    return {
+        "score": round(health_score, 1),
+        "total_findings": len(findings_list.inconsistencies),
+        "critical_count": severity_counts["Critical"],
+        "high_count": severity_counts["High"],
+        "medium_count": severity_counts["Medium"],
+        "low_count": severity_counts["Low"],
+        "state_message": state_message,  
+        "state_level": state_level        
+    }
+
+# --- Database Management ---
 def initialize_database():
     """Initializes the SQLite database and creates the metadata table with new columns."""
     conn = None
@@ -174,7 +251,7 @@ def check_for_cached_content(content_hash: str) -> Optional[str]:
         if conn:
             conn.close()
 
-# --- PDF Ingestion and Formatting (FR 3.1) ---
+# --- PDF Ingestion and Formatting ---
 def get_pdfs_in_directory(directory_path, converter: PdfConverter):
     """
     Finds PDFs, caches the content, and converts/logs new content.
@@ -197,13 +274,13 @@ def get_pdfs_in_directory(directory_path, converter: PdfConverter):
         print(f'Processing: {filename}')
         
         try:
-            # 1. Read file bytes and Calculate Content Hash (SHA256)
+            # Read file bytes and Calculate Content Hash (SHA256)
             with open(pdf_path, 'rb') as f:
                 pdf_bytes = f.read()
             
             content_hash = hashlib.sha256(pdf_bytes).hexdigest()
             
-            # 2. Check Database for Cache
+            # Check Database for Cache
             cached_content = check_for_cached_content(content_hash)
             
             if cached_content:
@@ -217,7 +294,7 @@ def get_pdfs_in_directory(directory_path, converter: PdfConverter):
                 rendered = converter(pdf_path) 
                 text, _, _ = text_from_rendered(rendered) 
                                 
-                # 3. Collect Metadata and Log New Content to DB
+                # Collect Metadata and Log New Content to DB
                 file_stats = os.stat(pdf_path)
                 version_id = str(uuid.uuid4())[:8] 
                 
@@ -239,7 +316,7 @@ def get_pdfs_in_directory(directory_path, converter: PdfConverter):
             
     return pdf_contents
 
-# --- Vectorization and RAG Prep (FR 3.4) (Minor change to handle no tags) ---
+# --- Vectorization and RAG Preparation ---
 def create_vector_store(artifact_contents: dict, collection_name: str, embedding_model_name: str):
     """
     Chunks Markdown content, embeds the chunks using Ollama, and stores 
@@ -247,7 +324,7 @@ def create_vector_store(artifact_contents: dict, collection_name: str, embedding
     """
     print("\n--- Starting Vectorization and ChromaDB Storage ---")
     
-    # 1. Initialize Ollama Embeddings (This loads the model to VRAM)
+    # Initialize Ollama Embeddings (loads the model to VRAM)
     try:
         embeddings = OllamaEmbeddings(model=embedding_model_name)
     except Exception as e:
@@ -255,7 +332,7 @@ def create_vector_store(artifact_contents: dict, collection_name: str, embedding
         print(f"Please ensure the embedding model '{embedding_model_name}' is pulled ('ollama pull {embedding_model_name}')")
         return None
 
-    # 2. Initialize ChromaDB Client
+    # Initialize ChromaDB Client
     persist_directory = "chroma_db"
     chroma_client = chromadb.PersistentClient(path=persist_directory)
     
@@ -268,10 +345,10 @@ def create_vector_store(artifact_contents: dict, collection_name: str, embedding
     except Exception:
         pass # Ignore if collection is empty or new
         
-    # 3. Process Each Artifact
+    # Process Each Artifact
     all_chunks: List[LangChainDocument] = []
     
-    # Define headers to split by. This is now based on structure, not tags.
+    # Define headers to split by
     headers_to_split_on = [
         ("#", "SectionTitle"),
         ("##", "SectionTitle"),
@@ -305,7 +382,7 @@ def create_vector_store(artifact_contents: dict, collection_name: str, embedding
 
     print(f"Total documents processed: {len(artifact_contents)}. Total chunks created: {len(all_chunks)}")
     
-    # 4. Embed and Store
+    # Embed and Store
     if all_chunks:
         print("Embedding and storing documents in ChromaDB... (Using OllamaEmbeddings)")
         
@@ -324,7 +401,7 @@ def create_vector_store(artifact_contents: dict, collection_name: str, embedding
     
     print("Vector store successfully created and ready for RAG.")
 
-# --- Output Management (UPDATE SourceArtifacts display) ---
+# --- Output Management ---
 def print_findings_list(findings_list: FindingsList, output_file: str = None):
     """
     Generates the list of findings in a clean, human-readable format 

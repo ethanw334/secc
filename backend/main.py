@@ -1,13 +1,13 @@
 import os
+import time
 import uuid
 import shutil
 import asyncio
 import gc
+import ollama
 from fastapi import FastAPI, UploadFile, WebSocket, WebSocketDisconnect, File
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
-
-# Import all models and functions from your original script
 import core_logic
 
 # --- Configuration ---
@@ -20,7 +20,7 @@ app = FastAPI()
 # Configure CORS to allow the React frontend (running on port 5173 by default)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Update if your React port is different
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -51,71 +51,19 @@ async def create_upload_session(files: List[UploadFile] = File(...)):
             
     return {"session_id": session_id}
 
-def calculate_health_report(findings_list: core_logic.FindingsList) -> dict:
+@app.get("/models")
+def get_available_models():
     """
-    Calculates a Multi-Attribute Utility Theory (MAUT) risk-based health score from the list of findings.
+    Fetches the list of locally downloaded models from Ollama.
     """
-    # weights for each severity (must sum to 1)
-    weights = {
-        "Critical": 0.55,
-        "High": 0.25,
-        "Medium": 0.15,
-        "Low": 0.05 
-    }
-    
-    # maximum acceptable/expected number of findings for severity level (each must be > 0)
-    max_findings = {
-        "Critical": 1,
-        "High": 5,
-        "Medium": 10,
-        "Low": 20
-    }
-
-    severity_counts = {
-        "Critical": 0,
-        "High": 0,
-        "Medium": 0,
-        "Low": 0
-    }
-
-    for finding in findings_list.inconsistencies:
-        severity_counts[finding.SeverityLevel] += 1
+    try:
+        response = ollama.list()
+        model_names = [m.model for m in response.models]
+        return {"models": model_names}
         
-    r = {severity: severity_counts[severity] / max_findings[severity] for severity in max_findings}
-
-    h = sum(weights[severity] * r[severity] for severity in weights)
-
-    # 4. Convert risk score to a 0-100 health score
-    health_score = max((1 - h) * 100, 0)
-
-    # --- 5. Determine state message and level based on score ---
-    state_message = ""
-    state_level = ""
-    
-    if health_score == 100:
-        state_message = "Excellent. No issues found."
-        state_level = "pass"
-    elif health_score >= 85:
-        state_message = "Healthy. Only minor issues found."
-        state_level = "pass"
-    elif health_score >= 70:
-        state_message = "Needs Review. Moderate issues detected."
-        state_level = "review"
-    else:
-        state_message = "Critical Issues. System health is low."
-        state_level = "danger"
-
-    # --- 6. NEW: Add new fields to the return dictionary ---
-    return {
-        "score": round(health_score, 1),
-        "total_findings": len(findings_list.inconsistencies),
-        "critical_count": severity_counts["Critical"],
-        "high_count": severity_counts["High"],
-        "medium_count": severity_counts["Medium"],
-        "low_count": severity_counts["Low"],
-        "state_message": state_message,  
-        "state_level": state_level       
-    }
+    except Exception as e:
+        print(f"Error fetching models: {e}")
+        return {"models": []}
 
 # --- WebSocket Endpoint: Analysis ---
 @app.websocket("/ws/analysis")
@@ -131,9 +79,15 @@ async def websocket_endpoint(websocket: WebSocket):
         await websocket.send_json({"type": "log", "message": message})
 
     try:
-        # 1. Wait for the client to send the session_id
+        # Receive the specific model name (e.g., "llama3.1:8b" or "gpt-5-mini")
         data = await websocket.receive_json()
+
+        print(f"DEBUG: Received WebSocket Data: {data}")
+
         session_id = data.get("session_id")
+        selected_model = data.get("model", core_logic.LLM) # Default to a safe local fallback
+
+        start_time = time.time()
         
         if not session_id:
             await send_log("Error: No session_id provided.")
@@ -144,13 +98,13 @@ async def websocket_endpoint(websocket: WebSocket):
             await send_log(f"Error: Session directory not found: {session_dir}")
             return
 
-        # 3.0 Initialize PDF Converter
+        # Initialize PDF Converter
         await send_log("Initializing PDF converter (Marker)... This may take a moment.")
         converter = core_logic.PdfConverter(
             artifact_dict=core_logic.create_model_dict(),
         )
 
-        # 3.1 Ingest and format documents
+        # Ingest and format documents
         artifact_contents = {}
         pdf_paths = [os.path.join(session_dir, f) for f in os.listdir(session_dir) if f.lower().endswith('.pdf')]
         
@@ -165,12 +119,12 @@ async def websocket_endpoint(websocket: WebSocket):
             await send_log(f'Processing: {filename}')
             
             try:
-                # 1. Read file bytes and Calculate Hash
+                # Read file bytes and Calculate Hash
                 with open(pdf_path, 'rb') as f:
                     pdf_bytes = f.read()
                 content_hash = core_logic.hashlib.sha256(pdf_bytes).hexdigest()
                 
-                # 2. Check Database for Cache
+                # Check Database for Cache
                 cached_content = core_logic.check_for_cached_content(content_hash)
                 
                 if cached_content:
@@ -188,7 +142,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     
                     await send_log(f'Conversion complete. Logging to database...')
                     
-                    # 3. Collect Metadata and Log
+                    # Collect Metadata and Log
                     file_stats = os.stat(pdf_path)
                     version_id = str(core_logic.uuid.uuid4())[:8] 
                     
@@ -209,14 +163,13 @@ async def websocket_endpoint(websocket: WebSocket):
                 await send_log(f"Error processing {filename}: {e}")
 
         # --- VRAM Management ---
-        await send_log("Releasing PDF converter from VRAM...")
         del converter 
         gc.collect() 
         try:
             import torch
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
-            await send_log("VRAM cache cleared.")
+
         except ImportError:
             pass # No torch
 
@@ -224,13 +177,13 @@ async def websocket_endpoint(websocket: WebSocket):
             await send_log("Analysis terminated due to missing PDF content.")
             return
             
-        # --- 4. LLM Prompt Setup ---
+        # --- LLM Prompt Setup ---
         await send_log("Formatting document context for LLM...")
         document_context = ""
         for filename, content in artifact_contents.items():
             document_context += f"--- START OF ARTIFACT: {filename} ---\n{content}\n--- END OF ARTIFACT: {filename} ---\n\n"
 
-        system_instruction = core_logic.system_instruction # Get from module
+        system_instruction = core_logic.system_instruction
         user_message = f'''
 **ARTIFACTS FOR CROSS-COMPARISON**
 ---
@@ -240,42 +193,115 @@ async def websocket_endpoint(websocket: WebSocket):
 Perform the cross-comparison audit based on your system instructions. Analyze the entire set of artifacts for discrepancies.
 ---
 '''
-        # --- 5. LLM Call ---
-        await send_log(f"Sending request to LLM ({core_logic.LLM})... This is the final, slow step.")
+        # --- LLM Call ---
+        await send_log(f"Sending request to {selected_model} ...")
+
+        # Define the sync function that will run in a separate thread
+        def run_llm_sync():
+            if selected_model == core_logic.OPENAI_MODEL:
+                if not core_logic.OPENAI_API_KEY:
+                    raise ValueError("OpenAI API Key not found.")
+                
+                client = core_logic.OpenAI(api_key=core_logic.OPENAI_API_KEY)
+                
+                completion = client.beta.chat.completions.parse(
+                    model=core_logic.OPENAI_MODEL,
+                    messages=[
+                        {"role": "system", "content": system_instruction},
+                        {"role": "user", "content": user_message},
+                    ],
+                    response_format=core_logic.FindingsList,
+                    #temperature=0
+                )
+                
+                # Extract usage from the raw completion object
+                usage = completion.usage
+                usage_stats = {
+                    "prompt_tokens": usage.prompt_tokens,
+                    "completion_tokens": usage.completion_tokens,
+                    "model": core_logic.OPENAI_MODEL
+                }
+                
+                return completion.choices[0].message.parsed, usage_stats
+                
+            else:
+                # Local (Ollama)
+                response = core_logic.chat(
+                    model=selected_model,
+                    messages=[
+                        {'role': 'system', 'content': system_instruction},
+                        {'role': 'user', 'content': user_message}
+                    ],
+                    format=core_logic.json_schema, 
+                    options={'temperature': 0, 'keep_alive': 0} 
+                )
+                
+                return core_logic.FindingsList.model_validate_json(response.message.content), None
+
+        # Run the logic
+        try:
+            inconsistencies, usage_stats = await asyncio.to_thread(run_llm_sync)
+        except Exception as e:
+            await send_log(f"LLM Error: {str(e)}")
+            return
+
+        await send_log("LLM response received. Calculating metrics...")
         
-        # The 'ollama.chat' function is synchronous, so we run it in a thread
-        # to avoid blocking the async server.
-        def run_ollama_sync():
-            return core_logic.chat(
-                model=core_logic.LLM,
-                messages=[
-                    {'role': 'system', 'content': system_instruction},
-                    {'role': 'user', 'content': user_message}
-                ],
-                format=core_logic.json_schema, 
-                options={'temperature': 0, 'keep_alive': 0} 
-            )
-
-        response = await asyncio.to_thread(run_ollama_sync)
+        # --- Calculate Cost ---
+        total_cost = 0.0
+        token_str = ""
         
-        # --- THIS IS THE NEW CODE ---
-        await send_log("LLM response received. Validating...")
-        inconsistencies = core_logic.FindingsList.model_validate_json(response.message.content)
+        if usage_stats and selected_model == core_logic.OPENAI_MODEL:
+            p_tokens = usage_stats["prompt_tokens"]
+            c_tokens = usage_stats["completion_tokens"]
+            
+            # Formula: (num tokens / 1M) * Price
+            cost_input = (p_tokens / 1_000_000) * core_logic.PRICE_GPT5_MINI_INPUT
+            cost_output = (c_tokens / 1_000_000) * core_logic.PRICE_GPT5_MINI_OUTPUT
+            total_cost = cost_input + cost_output
+            
+            token_str = f"({p_tokens + c_tokens} tokens)"
+            
+        else:
+            total_cost = 0.0
+            token_str = f"(Local: {selected_model})"
 
-        await send_log("Calculating health score...")
-        health_report = calculate_health_report(inconsistencies)
+        # --- Health Report & Timing ---
+        health_report = core_logic.calculate_health_report(inconsistencies)
+        
+        end_time = time.time()
+        duration_seconds = end_time - start_time
 
-        # --- 6. Send Result ---
-        # send a combined object with both findings and the report
+        # time formatting
+        if duration_seconds < 60:
+            time_str = f"{duration_seconds:.1f}s"
+        else:
+            minutes = int(duration_seconds // 60)
+            seconds = duration_seconds % 60
+            time_str = f"{minutes}m {seconds:.1f}s"
+            
+        health_report["execution_time"] = time_str
+        
+        # Inject cost into report
+        if total_cost == 0:
+            health_report["cost"] = "Free"
+        elif total_cost < 0.01:
+            health_report["cost"] = f"${total_cost:.4f}"
+        else:
+            health_report["cost"] = f"${total_cost:.2f}"
+            
+        health_report["token_info"] = token_str
+
+        # --- Send Result ---
         response_data = {
             "findings": inconsistencies.model_dump(),
             "health_report": health_report
         }
-
-        await send_log("Analysis complete. Sending results.")
+        
+        await send_log(f"Analysis complete in {time_str}. Cost: {health_report['cost']}.")
         await websocket.send_json({"type": "result", "data": response_data})
         
-        # --- 7. Cleanup ---
+        # --- Cleanup ---
         await send_log(f"Cleaning up session {session_id}.")
         shutil.rmtree(session_dir)
         await send_log("Session cleanup complete.")

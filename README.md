@@ -88,3 +88,9 @@ cd frontend
 npm run dev
 ```
 Open the link http://localhost:5173/ in browser to use app.
+
+## 8. OpenAI Support
+
+To run the SECC with OpenAI's gpt-5-mini:
+- Add a .env file to the root directory
+- Add the following line to the .env file: ```OPENAI_API_KEY = "your api key here"```
