@@ -18,6 +18,7 @@ from langchain_core.documents import Document as LangChainDocument
 import chromadb
 from dotenv import load_dotenv
 from openai import OpenAI
+import math
 
 # --- GLOBAL CONFIGURATION ---
 LLM = 'qwen3:8b' 
@@ -115,28 +116,29 @@ def calculate_health_report(findings_list: FindingsList) -> dict:
         "Medium": 0.15,
         "Low": 0.05 
     }
-    
-    # maximum acceptable/expected number of findings for severity level
-    max_findings = {
-        "Critical": 1,
-        "High": 5,
-        "Medium": 10,
-        "Low": 20
+
+    R_base = {
+        "Critical": 0.60,
+        "High": 0.45,
+        "Medium": 0.30,
+        "Low": 0.15 
     }
+
+    k = {severity: - math.log(1 - R_base[severity]) for severity in R_base}
 
     # This dictionary will store the counts for the final report
     severity_counts = {
-        "Low": 0,
-        "Medium": 0,
+        "Critical": 0,
         "High": 0,
-        "Critical": 0
+        "Medium": 0,
+        "Low": 0
     }
 
     for finding in findings_list.inconsistencies:
         severity_counts[finding.SeverityLevel] += 1
 
     # Use severity_counts to calculate the ratio r
-    r = {severity: severity_counts[severity] / max_findings[severity] for severity in max_findings}
+    r = {severity: 1 - math.exp(-k[severity] * severity_counts[severity]) for severity in weights}
 
     h = sum(weights[severity] * r[severity] for severity in weights)
 
