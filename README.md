@@ -24,13 +24,13 @@ ollama pull nomic-embed-text
 ## 4. Installation
 Follow these steps to set up the project:
 
-- Clone the repository:
+1. Clone the repository:
 
 ```
 git clone https: https://github.com/ethanw334/secc.git
 cd secc
 ```
-- Create a virtual environment (recommended):
+2. Create a virtual environment (recommended):
 
 ```
 python -m venv venv
@@ -49,31 +49,23 @@ source venv/bin/activate
 conda create --name secc_env python=3.13
 conda activate secc_env
 ```
-- Install PyTorch - https://pytorch.org/
-- Install Python dependencies:
+3. Install PyTorch - https://pytorch.org/
+4. Install Python dependencies:
 ```
 pip install -r requirements.txt
 ```
 
+5. Run the following:
+```
+cd frontend
+npm install
+```
+
+6. To use OpenAI's GPT-5 mini:
+- Add a .env file to the root directory
+- Add the following line to the .env file: ```OPENAI_API_KEY = "your api key here"```
+
 ## 5. Usage
-
-Place all the PDF documents you want to use as your knowledge base inside the PDFs folder. 
-
-To run the SECC application, simply execute the main Python script from your terminal:
-```
-python secc.py
-```
-
-The report will be output as analysis_report.txt
-
-## 6. File Descriptions
-
-secc.py: The SECC application script using all PDF data.
-
-rag_system.py: The RAG application script. This file contains all the logic for document ingestion, vectorization, and the RAG query-answering loop.
-
-
-## 7. How to run frontend
 
 1. Start the backend:
 ```
@@ -89,8 +81,4 @@ npm run dev
 ```
 Open the link http://localhost:5173/ in browser to use app.
 
-## 8. OpenAI Support
-
-To run the SECC with OpenAI's gpt-5-mini:
-- Add a .env file to the root directory
-- Add the following line to the .env file: ```OPENAI_API_KEY = "your api key here"```
+Upload all PDF documents to the SECC and click Analyze to generate a report. 
